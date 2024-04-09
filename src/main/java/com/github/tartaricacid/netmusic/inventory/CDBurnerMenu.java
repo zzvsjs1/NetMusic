@@ -82,6 +82,7 @@ public class CDBurnerMenu extends AbstractContainerMenu {
         return true;
     }
 
+    @Override
     public void removed(Player player) {
         super.removed(player);
         ItemHandlerHelper.giveItemToPlayer(player, input.getStackInSlot(0));
@@ -92,8 +93,15 @@ public class CDBurnerMenu extends AbstractContainerMenu {
         this.songInfo = setSongInfo;
         if (!this.input.getStackInSlot(0).isEmpty() && this.output.getStackInSlot(0).isEmpty()) {
             ItemStack itemStack = this.input.extractItem(0, 1, false);
-            ItemMusicCD.setSongInfo(this.songInfo, itemStack);
+            ItemMusicCD.SongInfo rawSongInfo = ItemMusicCD.getSongInfo(itemStack);
+            if (rawSongInfo == null || !rawSongInfo.readOnly) {
+                ItemMusicCD.setSongInfo(this.songInfo, itemStack);
+            }
             this.output.setStackInSlot(0, itemStack);
         }
+    }
+
+    public ItemStackHandler getInput() {
+        return input;
     }
 }

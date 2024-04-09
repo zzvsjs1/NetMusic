@@ -11,11 +11,13 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +28,7 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
     private static final Pattern URL_1_REG = Pattern.compile("^https://music\\.163\\.com/song\\?id=(\\d+).*$");
     private static final Pattern URL_2_REG = Pattern.compile("^https://music\\.163\\.com/#/song\\?id=(\\d+).*$");
     private EditBox textField;
+    private Checkbox readOnlyButton;
     private Component tips = Component.empty();
 
     public CDBurnerMenuScreen(CDBurnerMenu screenContainer, Inventory inv, Component titleIn) {
@@ -70,11 +73,23 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
         textField.moveCursorToEnd();
         this.addWidget(this.textField);
 
+        this.readOnlyButton = new Checkbox(leftPos + 7, topPos - 24, 80, 20, Component.translatable("gui.netmusic.cd_burner.read_only"), false);
+        this.addRenderableWidget(this.readOnlyButton);
         this.addRenderableWidget(Button.builder(Component.translatable("gui.netmusic.cd_burner.craft"), (b) -> handleCraftButton())
                 .pos(leftPos + 7, topPos + 33).size(135, 18).build());
     }
 
     private void handleCraftButton() {
+        ItemStack cd = this.getMenu().getInput().getStackInSlot(0);
+        if (cd.isEmpty()) {
+            this.tips = Component.translatable("gui.netmusic.cd_burner.cd_is_empty");
+            return;
+        }
+        ItemMusicCD.SongInfo songInfo = ItemMusicCD.getSongInfo(cd);
+        if (songInfo != null && songInfo.readOnly) {
+            this.tips = Component.translatable("gui.netmusic.cd_burner.cd_read_only");
+            return;
+        }
         if (Util.isBlank(textField.getValue())) {
             this.tips = Component.translatable("gui.netmusic.cd_burner.no_music_id");
             return;
@@ -83,6 +98,7 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
             long id = Long.parseLong(textField.getValue());
             try {
                 ItemMusicCD.SongInfo song = MusicListManage.get163Song(id);
+                song.readOnly = this.readOnlyButton.selected();
                 NetworkHandler.CHANNEL.sendToServer(new SetMusicIDMessage(song));
             } catch (Exception e) {
                 this.tips = Component.translatable("gui.netmusic.cd_burner.get_info_error");

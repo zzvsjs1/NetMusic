@@ -5,6 +5,7 @@
     "time_second": 130,
     "trans_name": "祖父，先祖",
     "vip": false,
+    "read_only": true,
     "artists": [
       "Mansur Yeşildağ"
     ]
