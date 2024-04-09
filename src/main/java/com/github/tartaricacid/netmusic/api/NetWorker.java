@@ -1,10 +1,15 @@
 package com.github.tartaricacid.netmusic.api;
 
+import com.github.tartaricacid.netmusic.config.GeneralConfig;
+import org.apache.commons.lang3.StringUtils;
+
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -19,7 +24,7 @@ public class NetWorker {
         StringBuilder result = new StringBuilder();
 
         URL urlConnect = new URL(url);
-        URLConnection connection = urlConnect.openConnection();
+        URLConnection connection = urlConnect.openConnection(getProxyFromConfig());
 
         Collection<String> keys = requestPropertyData.keySet();
         for (String key : keys) {
@@ -43,7 +48,7 @@ public class NetWorker {
     @Nullable
     public static String getRedirectUrl(String url, Map<String, String> requestPropertyData) throws IOException {
         URL urlConnect = new URL(url);
-        URLConnection connection = urlConnect.openConnection();
+        URLConnection connection = urlConnect.openConnection(getProxyFromConfig());
         Collection<String> keys = requestPropertyData.keySet();
         for (String key : keys) {
             String val = requestPropertyData.get(key);
@@ -60,7 +65,7 @@ public class NetWorker {
         PrintWriter printWriter;
 
         URL urlConnect = new URL(url);
-        URLConnection connection = urlConnect.openConnection();
+        URLConnection connection = urlConnect.openConnection(getProxyFromConfig());
 
         Collection<String> keys = requestPropertyData.keySet();
         for (String key : keys) {
@@ -85,5 +90,18 @@ public class NetWorker {
         printWriter.close();
 
         return result.toString();
+    }
+
+    private static Proxy getProxyFromConfig() {
+        Proxy.Type proxyType = GeneralConfig.PROXY_TYPE.get();
+        String proxyAddress = GeneralConfig.PROXY_ADDRESS.get();
+        if (proxyType == Proxy.Type.DIRECT || StringUtils.isBlank(proxyAddress)) {
+            return Proxy.NO_PROXY;
+        }
+        String[] split = proxyAddress.split(":", 2);
+        if (split.length != 2) {
+            return Proxy.NO_PROXY;
+        }
+        return new Proxy(proxyType, new InetSocketAddress(split[0], Integer.parseInt(split[1])));
     }
 }
