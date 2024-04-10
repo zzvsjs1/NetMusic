@@ -23,5 +23,9 @@
   "gui.netmusic.cd_burner.music_id_error": "The song ID format is incorrect,  please enter the song ID as a number!",
   "gui.netmusic.cd_burner.get_info_error": "The song information cannot be obtained, please check the song ID or network",
   "gui.netmusic.cd_burner.cd_read_only": "The CD is read only!",
-  "gui.netmusic.cd_burner.cd_is_empty": "Please put the CD in the input slot!"
+  "gui.netmusic.cd_burner.cd_is_empty": "Please put the CD in the input slot!",
+  "gui.netmusic.maid.music_player_backpack.previous": "Previous Music",
+  "gui.netmusic.maid.music_player_backpack.next": "Next Music",
+  "gui.netmusic.maid.music_player_backpack.play": "Play",
+  "gui.netmusic.maid.music_player_backpack.stop": "Stop"
 }

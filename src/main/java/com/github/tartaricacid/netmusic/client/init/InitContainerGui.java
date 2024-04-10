@@ -1,6 +1,7 @@
 package com.github.tartaricacid.netmusic.client.init;
 
 import com.github.tartaricacid.netmusic.client.gui.CDBurnerMenuScreen;
+import com.github.tartaricacid.netmusic.compat.tlm.init.CompatRegistry;
 import com.github.tartaricacid.netmusic.inventory.CDBurnerMenu;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
@@ -13,5 +14,6 @@ public class InitContainerGui {
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent evt) {
         evt.enqueueWork(() -> MenuScreens.register(CDBurnerMenu.TYPE, CDBurnerMenuScreen::new));
+        CompatRegistry.initContainerScreen(evt);
     }
 }

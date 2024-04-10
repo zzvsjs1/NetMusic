@@ -1,6 +1,7 @@
 package com.github.tartaricacid.netmusic.network;
 
 import com.github.tartaricacid.netmusic.NetMusic;
+import com.github.tartaricacid.netmusic.compat.tlm.init.CompatRegistry;
 import com.github.tartaricacid.netmusic.network.message.GetMusicListMessage;
 import com.github.tartaricacid.netmusic.network.message.MusicToClientMessage;
 import com.github.tartaricacid.netmusic.network.message.SetMusicIDMessage;
@@ -30,6 +31,7 @@ public class NetworkHandler {
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(2, SetMusicIDMessage.class, SetMusicIDMessage::encode, SetMusicIDMessage::decode, SetMusicIDMessage::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CompatRegistry.initNetwork(CHANNEL);
     }
 
     public static void sendToNearby(Level world, BlockPos pos, Object toSend) {
