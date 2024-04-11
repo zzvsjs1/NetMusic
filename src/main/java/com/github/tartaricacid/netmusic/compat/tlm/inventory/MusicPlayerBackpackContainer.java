@@ -1,17 +1,23 @@
 package com.github.tartaricacid.netmusic.compat.tlm.inventory;
 
+import com.github.tartaricacid.netmusic.NetMusic;
 import com.github.tartaricacid.netmusic.compat.tlm.backpack.data.MusicPlayerBackpackData;
+import com.github.tartaricacid.netmusic.compat.tlm.message.MaidMusicToClientMessage;
+import com.github.tartaricacid.netmusic.compat.tlm.message.MaidStopMusicMessage;
 import com.github.tartaricacid.netmusic.init.InitItems;
 import com.github.tartaricacid.netmusic.item.ItemMusicCD;
 import com.github.tartaricacid.netmusic.network.NetworkHandler;
-import com.github.tartaricacid.netmusic.compat.tlm.message.MaidMusicToClientMessage;
-import com.github.tartaricacid.netmusic.compat.tlm.message.MaidStopMusicMessage;
 import com.github.tartaricacid.touhoulittlemaid.inventory.container.MaidMainContainer;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -19,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MusicPlayerBackpackContainer extends MaidMainContainer {
     public static final MenuType<MusicPlayerBackpackContainer> TYPE = IForgeMenuType.create((windowId, inv, data) -> new MusicPlayerBackpackContainer(windowId, inv, data.readInt()));
+    private static final ResourceLocation EMPTY_CD_SLOT = new ResourceLocation(NetMusic.MOD_ID, "slot/music_cd_slot");
     private final ContainerData data;
 
     public MusicPlayerBackpackContainer(int id, Inventory inventory, int entityId) {
@@ -42,6 +49,12 @@ public class MusicPlayerBackpackContainer extends MaidMainContainer {
                     @Override
                     public boolean mayPlace(@NotNull ItemStack stack) {
                         return stack.is(InitItems.MUSIC_CD.get());
+                    }
+
+                    @Override
+                    @OnlyIn(Dist.CLIENT)
+                    public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+                        return Pair.of(InventoryMenu.BLOCK_ATLAS, EMPTY_CD_SLOT);
                     }
                 });
             }
