@@ -27,5 +27,14 @@
   "gui.netmusic.maid.music_player_backpack.previous": "Previous Music",
   "gui.netmusic.maid.music_player_backpack.next": "Next Music",
   "gui.netmusic.maid.music_player_backpack.play": "Play",
-  "gui.netmusic.maid.music_player_backpack.stop": "Stop"
+  "gui.netmusic.maid.music_player_backpack.stop": "Stop",
+  "gui.netmusic.computer.url.tips": "Enter the song url",
+  "gui.netmusic.computer.url.empty": "The song URL cannot be empty",
+  "gui.netmusic.computer.url.error": "The song URL format is incorrect, please enter a web link or local file path",
+  "gui.netmusic.computer.url.local_file_error": "The local file does not exist",
+  "gui.netmusic.computer.name.tips": "Enter the song name",
+  "gui.netmusic.computer.name.empty": "The song name cannot be empty",
+  "gui.netmusic.computer.time.tips": "Time (s)",
+  "gui.netmusic.computer.time.empty": "The song time cannot be empty",
+  "gui.netmusic.computer.time.not_number": "The song time format is incorrect, please enter the song time as a number!"
 }

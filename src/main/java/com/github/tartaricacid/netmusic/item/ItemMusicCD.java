@@ -119,6 +119,13 @@ public class ItemMusicCD extends Item {
         @SerializedName("artists")
         public List<String> artists = Lists.newArrayList();
 
+        public SongInfo(String songUrl, String songName, int songTime, boolean readOnly) {
+            this.songUrl = songUrl;
+            this.songName = songName;
+            this.songTime = songTime;
+            this.readOnly = readOnly;
+        }
+
         public SongInfo(NetEaseMusicSong pojo) {
             NetEaseMusicSong.Song song = pojo.getSong();
             if (song != null) {

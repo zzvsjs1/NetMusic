@@ -1,6 +1,7 @@
 package com.github.tartaricacid.netmusic.network.message;
 
 import com.github.tartaricacid.netmusic.inventory.CDBurnerMenu;
+import com.github.tartaricacid.netmusic.inventory.ComputerMenu;
 import com.github.tartaricacid.netmusic.item.ItemMusicCD;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -33,7 +34,14 @@ public class SetMusicIDMessage {
         if (context.getDirection().getReceptionSide().isServer()) {
             context.enqueueWork(() -> {
                 ServerPlayer sender = context.getSender();
-                if (sender != null && sender.containerMenu instanceof CDBurnerMenu menu) {
+                if (sender == null) {
+                    return;
+                }
+                if (sender.containerMenu instanceof CDBurnerMenu menu) {
+                    menu.setSongInfo(message.song);
+                    return;
+                }
+                if (sender.containerMenu instanceof ComputerMenu menu) {
                     menu.setSongInfo(message.song);
                 }
             });

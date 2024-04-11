@@ -1,6 +1,6 @@
 package com.github.tartaricacid.netmusic.block;
 
-import com.github.tartaricacid.netmusic.inventory.CDBurnerMenu;
+import com.github.tartaricacid.netmusic.inventory.ComputerMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -24,10 +24,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
-public class BlockCDBurner extends HorizontalDirectionalBlock {
-    protected static final VoxelShape BLOCK_AABB = Block.box(0, 0, 0, 16, 8, 16);
+public class BlockComputer extends HorizontalDirectionalBlock {
+    protected static final VoxelShape BLOCK_AABB = Block.box(0, 0, 0, 16, 16, 16);
 
-    public BlockCDBurner() {
+    public BlockComputer() {
         super(BlockBehaviour.Properties.of().sound(SoundType.WOOD).strength(0.5f).noOcclusion());
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
@@ -61,6 +61,6 @@ public class BlockCDBurner extends HorizontalDirectionalBlock {
 
     @Override
     public MenuProvider getMenuProvider(BlockState blockState, Level level, BlockPos blockPos) {
-        return new SimpleMenuProvider((id, inventory, player) -> new CDBurnerMenu(id, inventory), Component.literal("cd_burner"));
+        return new SimpleMenuProvider((id, inventory, player) -> new ComputerMenu(id, inventory), Component.literal("computer"));
     }
 }
