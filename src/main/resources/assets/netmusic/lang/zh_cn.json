@@ -32,6 +32,7 @@
   "gui.netmusic.maid.music_player_backpack.previous": "上一首",
   "gui.netmusic.maid.music_player_backpack.stop": "停止",
   "item.netmusic.music_cd": "音乐唱片",
+  "item.netmusic.music_player_backpack": "音响背包",
   "itemGroup.netmusic": "网络音乐机",
   "message.netmusic.music_player.need_vip": "这首歌曲是 VIP 歌曲，无法播放",
   "subtitle.netmusic.block.music_player": "唱片机声",

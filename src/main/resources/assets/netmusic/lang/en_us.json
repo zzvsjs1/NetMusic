@@ -1,6 +1,7 @@
 {
   "itemGroup.netmusic": "Net Music",
   "item.netmusic.music_cd": "Music CD",
+  "item.netmusic.music_player_backpack": "Music Player Backpack",
   "tooltips.netmusic.cd.trans_name": "Name",
   "tooltips.netmusic.cd.artists": "Artists",
   "tooltips.netmusic.cd.time": "Time",

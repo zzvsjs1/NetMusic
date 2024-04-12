@@ -1,9 +1,8 @@
 package com.github.tartaricacid.netmusic.compat.tlm.backpack;
 
 import com.github.tartaricacid.netmusic.NetMusic;
-import com.github.tartaricacid.netmusic.client.model.ModelMusicPlayer;
-import com.github.tartaricacid.netmusic.client.renderer.MusicPlayerRenderer;
 import com.github.tartaricacid.netmusic.compat.tlm.backpack.data.MusicPlayerBackpackData;
+import com.github.tartaricacid.netmusic.compat.tlm.client.model.MusicPlayerBackpackModel;
 import com.github.tartaricacid.netmusic.compat.tlm.inventory.MusicPlayerBackpackContainer;
 import com.github.tartaricacid.netmusic.init.InitItems;
 import com.github.tartaricacid.touhoulittlemaid.api.backpack.IBackpackData;
@@ -27,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class MusicPlayerBackpack extends IMaidBackpack {
     public static final ResourceLocation ID = new ResourceLocation(NetMusic.MOD_ID, "music_player_backpack");
+    public static final ResourceLocation TEXTURE = new ResourceLocation(NetMusic.MOD_ID, "textures/entity/music_player_backpack.png");
     private static final int MAX_AVAILABLE = 30;
 
     @Override
@@ -36,7 +36,7 @@ public class MusicPlayerBackpack extends IMaidBackpack {
 
     @Override
     public Item getItem() {
-        return InitItems.MUSIC_PLAYER.get();
+        return InitItems.MUSIC_PLAYER_BACKPACK.get();
     }
 
     @Override
@@ -86,19 +86,20 @@ public class MusicPlayerBackpack extends IMaidBackpack {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void offsetBackpackItem(PoseStack poseStack) {
+        poseStack.translate(0.0, 0.625, -0.05);
     }
 
     @Nullable
     @Override
     @OnlyIn(Dist.CLIENT)
     public EntityModel<EntityMaid> getBackpackModel(EntityModelSet entityModelSet) {
-        return new ModelMusicPlayer<>(entityModelSet.bakeLayer(ModelMusicPlayer.LAYER));
+        return new MusicPlayerBackpackModel<>(entityModelSet.bakeLayer(MusicPlayerBackpackModel.LAYER));
     }
 
     @Nullable
     @Override
     @OnlyIn(Dist.CLIENT)
     public ResourceLocation getBackpackTexture() {
-        return MusicPlayerRenderer.TEXTURE;
+        return TEXTURE;
     }
 }

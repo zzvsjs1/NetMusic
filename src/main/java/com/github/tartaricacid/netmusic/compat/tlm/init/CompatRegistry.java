@@ -2,6 +2,7 @@ package com.github.tartaricacid.netmusic.compat.tlm.init;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -16,6 +17,12 @@ public class CompatRegistry {
     @SubscribeEvent
     public static void initContainer(RegisterEvent event) {
         checkModLoad(TLM, () -> ContainerInit.init(event));
+    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        checkModLoad(TLM, () -> ModelInit.init(event));
     }
 
     @OnlyIn(Dist.CLIENT)
