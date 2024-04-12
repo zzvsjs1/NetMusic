@@ -33,6 +33,7 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
 
     public CDBurnerMenuScreen(CDBurnerMenu screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
+        this.imageHeight = 176;
     }
 
     @Override
@@ -73,10 +74,10 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
         textField.moveCursorToEnd();
         this.addWidget(this.textField);
 
-        this.readOnlyButton = new Checkbox(leftPos + 7, topPos - 24, 80, 20, Component.translatable("gui.netmusic.cd_burner.read_only"), false);
+        this.readOnlyButton = new Checkbox(leftPos + 66, topPos + 34, 80, 20, Component.translatable("gui.netmusic.cd_burner.read_only"), false);
         this.addRenderableWidget(this.readOnlyButton);
         this.addRenderableWidget(Button.builder(Component.translatable("gui.netmusic.cd_burner.craft"), (b) -> handleCraftButton())
-                .pos(leftPos + 7, topPos + 33).size(135, 18).build());
+                .pos(leftPos + 7, topPos + 35).size(55, 18).build());
     }
 
     private void handleCraftButton() {
@@ -128,7 +129,7 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
         if (Util.isBlank(textField.getValue()) && !textField.isFocused()) {
             graphics.drawString(font, Component.translatable("gui.netmusic.cd_burner.id.tips").withStyle(ChatFormatting.ITALIC), this.leftPos + 12, this.topPos + 18, ChatFormatting.GRAY.getColor(), false);
         }
-        graphics.drawWordWrap(font, tips, this.leftPos + 8, this.topPos + 55, 135, 0xCF0000);
+        graphics.drawWordWrap(font, tips, this.leftPos + 8, this.topPos + 57, 135, 0xCF0000);
         renderTooltip(graphics, x, y);
     }
 

@@ -37,7 +37,7 @@ public class ComputerMenuScreen extends AbstractContainerScreen<ComputerMenu> {
 
     public ComputerMenuScreen(ComputerMenu screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
-        this.imageHeight = 206;
+        this.imageHeight = 216;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ComputerMenuScreen extends AbstractContainerScreen<ComputerMenu> {
         urlTextField = new EditBox(getMinecraft().font, leftPos + 10, topPos + 18, 120, 16, Component.literal("Music URL Box"));
         urlTextField.setValue(perText);
         urlTextField.setBordered(false);
-        urlTextField.setMaxLength(256);
+        urlTextField.setMaxLength(32500);
         urlTextField.setTextColor(0xF3EFE0);
         urlTextField.setFocused(focus);
         urlTextField.moveCursorToEnd();
@@ -80,7 +80,7 @@ public class ComputerMenuScreen extends AbstractContainerScreen<ComputerMenu> {
         nameTextField = new EditBox(getMinecraft().font, leftPos + 10, topPos + 39, 120, 16, Component.literal("Music Name Box"));
         nameTextField.setValue(perText);
         nameTextField.setBordered(false);
-        nameTextField.setMaxLength(64);
+        nameTextField.setMaxLength(256);
         nameTextField.setTextColor(0xF3EFE0);
         nameTextField.setFocused(focus);
         nameTextField.moveCursorToEnd();

@@ -39,15 +39,15 @@ public class CDBurnerMenu extends AbstractContainerMenu {
         super(TYPE, id);
 
         this.addSlot(new SlotItemHandler(input, 0, 147, 14));
-        this.addSlot(new SlotItemHandler(output, 0, 147, 57));
+        this.addSlot(new SlotItemHandler(output, 0, 147, 67));
 
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(inventory, i, 8 + i * 18, 142));
+            this.addSlot(new Slot(inventory, i, 8 + i * 18, 152));
         }
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 94 + i * 18));
             }
         }
     }

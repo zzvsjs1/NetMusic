@@ -1,6 +1,7 @@
 package com.github.tartaricacid.netmusic.block;
 
 import com.github.tartaricacid.netmusic.inventory.ComputerMenu;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -9,6 +10,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -23,6 +26,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class BlockComputer extends HorizontalDirectionalBlock {
     protected static final VoxelShape BLOCK_AABB = Block.box(0, 0, 0, 16, 16, 16);
@@ -62,5 +66,11 @@ public class BlockComputer extends HorizontalDirectionalBlock {
     @Override
     public MenuProvider getMenuProvider(BlockState blockState, Level level, BlockPos blockPos) {
         return new SimpleMenuProvider((id, inventory, player) -> new ComputerMenu(id, inventory), Component.literal("computer"));
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(Component.translatable("block.netmusic.computer.web_link.desc").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("block.netmusic.computer.local_file.desc").withStyle(ChatFormatting.GRAY));
     }
 }

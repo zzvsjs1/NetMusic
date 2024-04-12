@@ -42,12 +42,12 @@ public class ComputerMenu extends AbstractContainerMenu {
         this.addSlot(new SlotItemHandler(output, 0, 147, 79));
 
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(inventory, i, 8 + i * 18, 182));
+            this.addSlot(new Slot(inventory, i, 8 + i * 18, 192));
         }
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 124 + i * 18));
+                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 134 + i * 18));
             }
         }
     }
