@@ -41,5 +41,6 @@
   "tooltips.netmusic.cd.read_only": "[只读]",
   "tooltips.netmusic.cd.time": "时长",
   "tooltips.netmusic.cd.time.format": "%s分%s秒",
-  "tooltips.netmusic.cd.trans_name": "歌名"
+  "tooltips.netmusic.cd.trans_name": "歌名",
+  "jei.netmusic.altar_craft.item_craft.result": "合成物品"
 }

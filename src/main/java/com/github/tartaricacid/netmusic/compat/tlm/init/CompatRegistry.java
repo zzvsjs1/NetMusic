@@ -1,5 +1,8 @@
 package com.github.tartaricacid.netmusic.compat.tlm.init;
 
+import com.github.tartaricacid.netmusic.init.InitItems;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -28,6 +31,10 @@ public class CompatRegistry {
     @OnlyIn(Dist.CLIENT)
     public static void initContainerScreen(FMLClientSetupEvent event) {
         checkModLoad(TLM, () -> ContainerScreenInit.init(event));
+    }
+
+    public static void initCreativeModeTab(CreativeModeTab.Output output) {
+        checkModLoad(TLM, () -> output.accept(new ItemStack(InitItems.MUSIC_PLAYER_BACKPACK.get())));
     }
 
     public static void initNetwork(SimpleChannel channel) {

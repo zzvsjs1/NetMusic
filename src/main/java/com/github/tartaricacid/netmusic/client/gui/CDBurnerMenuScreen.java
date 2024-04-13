@@ -18,10 +18,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import org.anti_ad.mc.ipn.api.IPNIgnore;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@IPNIgnore
 public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
     private static final ResourceLocation BG = new ResourceLocation(NetMusic.MOD_ID, "textures/gui/cd_burner.png");
     private static final Pattern ID_REG = Pattern.compile("^\\d{4,}$");

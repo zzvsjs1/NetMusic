@@ -17,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import org.anti_ad.mc.ipn.api.IPNIgnore;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -24,6 +25,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
+@IPNIgnore
 public class ComputerMenuScreen extends AbstractContainerScreen<ComputerMenu> {
     private static final ResourceLocation BG = new ResourceLocation(NetMusic.MOD_ID, "textures/gui/computer.png");
     private static final Pattern URL_HTTP_REG = Pattern.compile("(http|ftp|https)://[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-.,@?^=%&:/~+#]*[\\w\\-@?^=%&/~+#])?");

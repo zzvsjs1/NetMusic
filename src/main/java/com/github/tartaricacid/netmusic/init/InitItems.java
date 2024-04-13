@@ -2,6 +2,7 @@ package com.github.tartaricacid.netmusic.init;
 
 import com.github.tartaricacid.netmusic.NetMusic;
 import com.github.tartaricacid.netmusic.client.config.MusicListManage;
+import com.github.tartaricacid.netmusic.compat.tlm.init.CompatRegistry;
 import com.github.tartaricacid.netmusic.item.ItemMusicCD;
 import com.github.tartaricacid.netmusic.item.ItemMusicPlayer;
 import net.minecraft.core.registries.Registries;
@@ -29,7 +30,7 @@ public class InitItems {
                         output.accept(new ItemStack(MUSIC_PLAYER.get()));
                         output.accept(new ItemStack(InitItems.CD_BURNER.get()));
                         output.accept(new ItemStack(InitItems.COMPUTER.get()));
-                        output.accept(new ItemStack(InitItems.MUSIC_PLAYER_BACKPACK.get()));
+                        CompatRegistry.initCreativeModeTab(output);
                         output.accept(new ItemStack(InitItems.MUSIC_CD.get()));
                         for (ItemMusicCD.SongInfo info : MusicListManage.SONGS) {
                             ItemStack stack = new ItemStack(MUSIC_CD.get());
