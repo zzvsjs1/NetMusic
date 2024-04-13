@@ -11,6 +11,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.function.Function;
 
@@ -39,8 +40,9 @@ public final class MusicPlayManager {
             urlFinal = new URL(url);
             // 如果是本地文件
             if (urlFinal.getProtocol().equals(LOCAL_FILE_PROTOCOL)) {
-                File file = new File(urlFinal.getPath());
+                File file = new File(urlFinal.toURI());
                 if (!file.exists()) {
+                    NetMusic.LOGGER.info("File not found: {}", url);
                     return;
                 }
             }
@@ -48,7 +50,7 @@ public final class MusicPlayManager {
                 Minecraft.getInstance().getSoundManager().play(sound.apply(urlFinal));
                 Minecraft.getInstance().gui.setNowPlaying(Component.literal(songName));
             });
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
