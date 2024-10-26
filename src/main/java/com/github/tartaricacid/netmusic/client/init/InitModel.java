@@ -1,6 +1,5 @@
 package com.github.tartaricacid.netmusic.client.init;
 
-
 import com.github.tartaricacid.netmusic.client.model.ModelMusicPlayer;
 import com.github.tartaricacid.netmusic.client.renderer.MusicPlayerRenderer;
 import com.github.tartaricacid.netmusic.tileentity.TileEntityMusicPlayer;
@@ -13,6 +12,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class InitModel {
+
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent evt) {
         BlockEntityRenderers.register(TileEntityMusicPlayer.TYPE, MusicPlayerRenderer::new);

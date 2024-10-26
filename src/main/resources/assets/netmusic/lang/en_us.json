@@ -1,7 +1,6 @@
 {
   "itemGroup.netmusic": "Net Music",
   "item.netmusic.music_cd": "Music CD",
-  "item.netmusic.music_player_backpack": "Music Player Backpack",
   "tooltips.netmusic.cd.trans_name": "Name",
   "tooltips.netmusic.cd.artists": "Artists",
   "tooltips.netmusic.cd.time": "Time",
@@ -29,10 +28,6 @@
   "gui.netmusic.cd_burner.get_info_error": "The song information cannot be obtained, please check the song ID or network",
   "gui.netmusic.cd_burner.cd_read_only": "The CD is read only!",
   "gui.netmusic.cd_burner.cd_is_empty": "Please put the CD in the input slot!",
-  "gui.netmusic.maid.music_player_backpack.previous": "Previous Music",
-  "gui.netmusic.maid.music_player_backpack.next": "Next Music",
-  "gui.netmusic.maid.music_player_backpack.play": "Play",
-  "gui.netmusic.maid.music_player_backpack.stop": "Stop",
   "gui.netmusic.computer.url.tips": "Enter the song url",
   "gui.netmusic.computer.url.empty": "The song URL cannot be empty",
   "gui.netmusic.computer.url.error": "The song URL format is incorrect, please enter a web link or local file path",

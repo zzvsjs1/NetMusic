@@ -1,7 +1,6 @@
 package com.github.tartaricacid.netmusic.network;
 
 import com.github.tartaricacid.netmusic.NetMusic;
-import com.github.tartaricacid.netmusic.compat.tlm.init.CompatRegistry;
 import com.github.tartaricacid.netmusic.network.message.GetMusicListMessage;
 import com.github.tartaricacid.netmusic.network.message.MusicToClientMessage;
 import com.github.tartaricacid.netmusic.network.message.SetMusicIDMessage;
@@ -21,24 +20,34 @@ import java.util.Optional;
 public class NetworkHandler {
     private static final String VERSION = "1.0.0";
 
-    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(NetMusic.MOD_ID, "network"),
-            () -> VERSION, it -> it.equals(VERSION), it -> it.equals(VERSION));
+    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(NetMusic.MOD_ID,
+            "network"), () -> VERSION, it -> it.equals(VERSION), it -> it.equals(VERSION));
 
     public static void init() {
-        CHANNEL.registerMessage(0, MusicToClientMessage.class, MusicToClientMessage::encode, MusicToClientMessage::decode, MusicToClientMessage::handle,
+        CHANNEL.registerMessage(0,
+                MusicToClientMessage.class,
+                MusicToClientMessage::encode,
+                MusicToClientMessage::decode,
+                MusicToClientMessage::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-        CHANNEL.registerMessage(1, GetMusicListMessage.class, GetMusicListMessage::encode, GetMusicListMessage::decode, GetMusicListMessage::handle,
+        CHANNEL.registerMessage(1,
+                GetMusicListMessage.class,
+                GetMusicListMessage::encode,
+                GetMusicListMessage::decode,
+                GetMusicListMessage::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-        CHANNEL.registerMessage(2, SetMusicIDMessage.class, SetMusicIDMessage::encode, SetMusicIDMessage::decode, SetMusicIDMessage::handle,
+        CHANNEL.registerMessage(2,
+                SetMusicIDMessage.class,
+                SetMusicIDMessage::encode,
+                SetMusicIDMessage::decode,
+                SetMusicIDMessage::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
-        CompatRegistry.initNetwork(CHANNEL);
     }
 
     public static void sendToNearby(Level world, BlockPos pos, Object toSend) {
-        if (world instanceof ServerLevel) {
-            ServerLevel ws = (ServerLevel) world;
-
-            ws.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).stream()
+        if (world instanceof ServerLevel ws) {
+            ws.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false)
+                    .stream()
                     .filter(p -> p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < 96 * 96)
                     .forEach(p -> CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), toSend));
         }

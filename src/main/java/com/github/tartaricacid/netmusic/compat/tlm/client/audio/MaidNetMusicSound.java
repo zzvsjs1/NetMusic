@@ -1,9 +1,7 @@
 package com.github.tartaricacid.netmusic.compat.tlm.client.audio;
 
 import com.github.tartaricacid.netmusic.client.audio.Mp3AudioStream;
-import com.github.tartaricacid.netmusic.compat.tlm.backpack.MusicPlayerBackpack;
 import com.github.tartaricacid.netmusic.init.InitSounds;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
@@ -14,6 +12,7 @@ import net.minecraft.client.sounds.SoundBufferLibrary;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
@@ -21,18 +20,15 @@ import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 
 public class MaidNetMusicSound extends AbstractTickableSoundInstance {
-    private final EntityMaid maid;
     private final URL songUrl;
     private final int tickTimes;
     private int tick;
 
-    public MaidNetMusicSound(EntityMaid maid, URL songUrl, int timeSecond) {
+    public MaidNetMusicSound(URL songUrl, int timeSecond) {
         super(InitSounds.NET_MUSIC.get(), SoundSource.RECORDS, SoundInstance.createUnseededRandom());
-        this.maid = maid;
+
         this.songUrl = songUrl;
-        this.x = maid.getX();
-        this.y = maid.getY();
-        this.z = maid.getZ();
+
         this.tickTimes = timeSecond * 20;
         this.volume = 4.0f;
         this.tick = 0;
@@ -40,12 +36,6 @@ public class MaidNetMusicSound extends AbstractTickableSoundInstance {
 
     @Override
     public void tick() {
-        if (this.maid.isRemoved()) {
-            this.stop();
-        }
-        if (!(maid.getMaidBackpackType() instanceof MusicPlayerBackpack)) {
-            this.stop();
-        }
         Level world = Minecraft.getInstance().level;
         if (world == null) {
             this.stop();
@@ -56,9 +46,6 @@ public class MaidNetMusicSound extends AbstractTickableSoundInstance {
         if (tick > tickTimes + 50) {
             this.stop();
         } else {
-            this.x = this.maid.getX();
-            this.y = this.maid.getY();
-            this.z = this.maid.getZ();
             if (world.getGameTime() % 8 == 0) {
                 for (int i = 0; i < 2; i++) {
                     world.addParticle(ParticleTypes.NOTE,
@@ -72,7 +59,7 @@ public class MaidNetMusicSound extends AbstractTickableSoundInstance {
     }
 
     @Override
-    public CompletableFuture<AudioStream> getStream(SoundBufferLibrary soundBuffers, Sound sound, boolean looping) {
+    public @NotNull CompletableFuture<AudioStream> getStream(SoundBufferLibrary soundBuffers, Sound sound, boolean looping) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return new Mp3AudioStream(this.songUrl);
@@ -81,10 +68,6 @@ public class MaidNetMusicSound extends AbstractTickableSoundInstance {
             }
             return null;
         }, Util.backgroundExecutor());
-    }
-
-    public int getMaidId() {
-        return this.maid.getId();
     }
 
     public void setStop() {

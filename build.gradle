@@ -6,16 +6,34 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '[6.0,6.2)', changing: true
         classpath 'org.parchmentmc:librarian:1.+'
-        classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
+//        classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
     }
 }
+
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+
+//    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+
+    // This should be below the net.minecraftforge.gradle plugin
+//    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+
+    // Adds the Kotlin Gradle plugin
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
+
+    // OPTIONAL Kotlin Serialization plugin
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.22'
+
+    id 'com.gradleup.shadow' version '8.3.3'
+}
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply plugin: 'eclipse'
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'java'
+//apply plugin: 'com.github.johnrengelman.shadow'
 
 version = '1.1.3'
 group = 'com.github.tartaricacid'
@@ -26,9 +44,10 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 minecraft {
     mappings channel: 'parchment', version: '2023.08.20-1.20.1'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    copyIdeResources = true
     runs {
         client {
-            jvmArgs "-XX:+AllowEnhancedClassRedefinition"
+//            jvmArgs "-XX:+AllowEnhancedClassRedefinition"
             workingDirectory project.file('run/client_a')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
@@ -91,24 +110,44 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+        content { includeGroup "thedarkcolour" }
+    }
+    maven {
+        name = "IPN-Releases"
+        url = "https://maven.ipn-mod.org/releases"
+        mavenContent {
+            releasesOnly()
+        }
+        content {
+            includeGroup "org.anti_ad.mc"
+            includeGroup "ca.solo-studios"
+        }
+    }
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.20.1-47.1.0'
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     minecraftLibrary 'com.googlecode.soundlibs:mp3spi:1.9.5.4'
 
     // compile against the JEI API but do not include it at runtime
-    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-common-api:15.0.0.12"))
-    compileOnly(fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.0.0.12"))
+    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
+
+    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
     // at runtime, use the full JEI jar for Forge
-    runtimeOnly(fg.deobf("mezz.jei:jei-1.20.1-forge:15.0.0.12"))
+    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
 
-    implementation fg.deobf("curse.maven:touhou-little-maid-355044:4968578")
-    //implementation fg.deobf("curse.maven:touhou-little-maid-355044:5054217")
+    compileOnly "org.anti_ad.mc:InventoryProfilesNext-forge-1.20:1.10.7"
 
-    runtimeOnly "curse.maven:kotlin-for-forge-351264:4983659"
-    runtimeOnly fg.deobf("curse.maven:libipn-679177:4870127")
-    implementation fg.deobf("curse.maven:inventory-profiles-next-495267:4813458")
+    compileOnly "org.anti_ad.mc:IPN-forge-1.20:1.10.9"
+
+    // Adds KFF as dependency and Kotlin libs (use the variant matching your mod loader)
+    // FORGE
+    implementation 'thedarkcolour:kotlinforforge:4.10.0'
+    // NEOFORGE
+    implementation 'thedarkcolour:kotlinforforge-neoforge:4.10.0'
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -133,7 +172,7 @@ reobf {
     shadowJar {}
 }
 
-task shadowJarPublish(type: Jar) {
+tasks.register('shadowJarPublish', Jar) {
     dependsOn reobfShadowJar
     archiveClassifier = "all"
     from zipTree("${project.projectDir}/build/reobfShadowJar/output.jar")

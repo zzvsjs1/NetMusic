@@ -16,25 +16,26 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import org.jetbrains.annotations.NotNull;
 
 public class MusicPlayerRenderer implements BlockEntityRenderer<TileEntityMusicPlayer> {
     public static ModelMusicPlayer<?> MODEL;
     public static final ResourceLocation TEXTURE = new ResourceLocation(NetMusic.MOD_ID, "textures/block/music_player.png");
     public static MusicPlayerRenderer instance;
 
-    public MusicPlayerRenderer(BlockEntityRendererProvider.Context dispatcher) {
+    public MusicPlayerRenderer(BlockEntityRendererProvider.@NotNull Context dispatcher) {
         MODEL = new ModelMusicPlayer<>(dispatcher.bakeLayer(ModelMusicPlayer.LAYER));
         instance = this;
     }
 
     @Override
-    public void render(TileEntityMusicPlayer te, float pPartialTicks, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+    public void render(TileEntityMusicPlayer te, float pPartialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         Direction facing = te.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
         ItemStack cd = te.getPlayerInv().getStackInSlot(0);
         ModelPart disc = MODEL.getDiscBone();
         disc.visible = !cd.isEmpty();
         if (!cd.isEmpty() && te.isPlay()) {
-            disc.yRot = (float) ((2 * Math.PI / 40) * ((System.currentTimeMillis() / 50) % 40));
+            disc.yRot = (float) ((2 * Math.PI / 40) * (((double) System.currentTimeMillis() / 50) % 40));
         }
         renderMusicPlayer(matrixStack, buffer, combinedLight, facing);
     }
@@ -44,9 +45,6 @@ public class MusicPlayerRenderer implements BlockEntityRenderer<TileEntityMusicP
         matrixStack.scale(0.75f, 0.75f, 0.75f);
         matrixStack.translate(0.5 / 0.75, 1.5, 0.5 / 0.75);
         switch (facing) {
-            case NORTH:
-            default:
-                break;
             case SOUTH:
                 matrixStack.mulPose(Axis.YP.rotationDegrees(180));
                 break;
@@ -56,7 +54,11 @@ public class MusicPlayerRenderer implements BlockEntityRenderer<TileEntityMusicP
             case WEST:
                 matrixStack.mulPose(Axis.YP.rotationDegrees(90));
                 break;
+            case NORTH:
+            default:
+                break;
         }
+
         matrixStack.mulPose(Axis.ZP.rotationDegrees(180));
         VertexConsumer vertexBuilder = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
         MODEL.renderToBuffer(matrixStack, vertexBuilder, combinedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);

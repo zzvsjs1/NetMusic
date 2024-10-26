@@ -47,9 +47,6 @@ public class MaidStopMusicMessage {
             if (!(instance instanceof MaidNetMusicSound sound)) {
                 continue;
             }
-            if (sound.getMaidId() == message.entityId) {
-                sound.setStop();
-            }
         }
     }
 }

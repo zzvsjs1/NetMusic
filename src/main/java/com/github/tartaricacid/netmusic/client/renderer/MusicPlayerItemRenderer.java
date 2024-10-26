@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class MusicPlayerItemRenderer extends BlockEntityWithoutLevelRenderer {
     public MusicPlayerItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
@@ -15,7 +16,7 @@ public class MusicPlayerItemRenderer extends BlockEntityWithoutLevelRenderer {
     }
 
     @Override
-    public void renderByItem(ItemStack stack, ItemDisplayContext transformType, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void renderByItem(@NotNull ItemStack stack, @NotNull ItemDisplayContext transformType, PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         poseStack.scale(4 / 3.0f, 4 / 3.0f, 4 / 3.0f);
         poseStack.translate(0.5 - 0.5 / 0.75, 0, 0.5 - 0.5 / 0.75);
         MusicPlayerRenderer.instance.renderMusicPlayer(poseStack, bufferIn, combinedLightIn, Direction.WEST);

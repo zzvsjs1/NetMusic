@@ -22,12 +22,19 @@ public class NetMusic {
 
     public NetMusic() {
         NET_EASE_WEB_API = new NetEaseMusic().getApi();
+
         InitBlocks.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
+
         InitBlocks.TILE_ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
+
         InitItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+
         InitItems.TABS.register(FMLJavaModLoadingContext.get().getModEventBus());
+
         InitSounds.SOUND_EVENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
+
         InitContainer.CONTAINER_TYPE.register(FMLJavaModLoadingContext.get().getModEventBus());
+
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, GeneralConfig.init());
     }
 }

@@ -2,11 +2,9 @@ package com.github.tartaricacid.netmusic.compat.tlm.message;
 
 import com.github.tartaricacid.netmusic.client.audio.MusicPlayManager;
 import com.github.tartaricacid.netmusic.compat.tlm.client.audio.MaidNetMusicSound;
-import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
@@ -51,10 +49,7 @@ public class MaidMusicToClientMessage {
         if (Minecraft.getInstance().level == null) {
             return;
         }
-        Entity entity = Minecraft.getInstance().level.getEntity(message.entityId);
-        if (!(entity instanceof EntityMaid maid)) {
-            return;
-        }
-        MusicPlayManager.play(message.url, message.songName, url -> new MaidNetMusicSound(maid, url, message.timeSecond));
+
+        MusicPlayManager.play(message.url, message.songName, url -> new MaidNetMusicSound(url, message.timeSecond));
     }
 }
