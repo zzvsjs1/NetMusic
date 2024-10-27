@@ -1,15 +1,15 @@
-modLoader = "javafml"
-loaderVersion = "[46,)"
+#modLoader = "javafml"
+#loaderVersion = "[46,)"
 
-#modLoader="kotlinforforge"
-#loaderVersion="[4.10,)"
+modLoader="kotlinforforge"
+loaderVersion="[4.10,)"
 
 license = "MIT"
 [[mods]]
 modId = "netmusic"
 version = "${file.jarVersion}"
 displayName = "Net Music Mod"
-authors = "TartaricAcid, 郝南村, 琥珀酸, 帕金伊, SQwatermark"
+authors = "C"
 description = "A music player mod"
 
 [[dependencies.netmusic]]

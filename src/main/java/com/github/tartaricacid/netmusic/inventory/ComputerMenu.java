@@ -91,12 +91,14 @@ public class ComputerMenu extends AbstractContainerMenu {
 
     public void setSongInfo(ItemMusicCD.SongInfo setSongInfo) {
         this.songInfo = setSongInfo;
+
         if (!this.input.getStackInSlot(0).isEmpty() && this.output.getStackInSlot(0).isEmpty()) {
             ItemStack itemStack = this.input.extractItem(0, 1, false);
             ItemMusicCD.SongInfo rawSongInfo = ItemMusicCD.getSongInfo(itemStack);
             if (rawSongInfo == null || !rawSongInfo.readOnly) {
                 ItemMusicCD.setSongInfo(this.songInfo, itemStack);
             }
+
             this.output.setStackInSlot(0, itemStack);
         }
     }

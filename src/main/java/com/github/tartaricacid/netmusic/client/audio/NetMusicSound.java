@@ -60,8 +60,7 @@ public class NetMusicSound extends AbstractTickableSoundInstance {
         }
 
         BlockEntity te = world.getBlockEntity(pos);
-        if (te instanceof TileEntityMusicPlayer) {
-            TileEntityMusicPlayer musicPlay = (TileEntityMusicPlayer) te;
+        if (te instanceof TileEntityMusicPlayer musicPlay) {
             if (!musicPlay.isPlay()) {
                 this.stop();
             }
@@ -78,6 +77,7 @@ public class NetMusicSound extends AbstractTickableSoundInstance {
             } catch (IOException | UnsupportedAudioFileException e) {
                 e.printStackTrace();
             }
+
             return null;
         }, Util.backgroundExecutor());
     }

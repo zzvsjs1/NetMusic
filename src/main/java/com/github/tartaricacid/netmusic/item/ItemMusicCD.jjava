@@ -19,11 +19,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemMusicCD extends Item {
+
     public static final String SONG_INFO_TAG = "NetMusicSongInfo";
 
     public ItemMusicCD() {
@@ -38,6 +40,7 @@ public class ItemMusicCD extends Item {
                 return SongInfo.deserializeNBT(infoTag);
             }
         }
+
         return null;
     }
 
@@ -47,6 +50,7 @@ public class ItemMusicCD extends Item {
             if (tag == null) {
                 tag = new CompoundTag();
             }
+
             CompoundTag songInfoTag = new CompoundTag();
             SongInfo.serializeNBT(info, songInfoTag);
             tag.put(SONG_INFO_TAG, songInfoTag);
@@ -56,7 +60,7 @@ public class ItemMusicCD extends Item {
     }
 
     @Override
-    public Component getName(ItemStack stack) {
+    public @NotNull Component getName(@NotNull ItemStack stack) {
         SongInfo info = getSongInfo(stack);
         if (info != null) {
             String name = info.songName;
@@ -64,7 +68,8 @@ public class ItemMusicCD extends Item {
                 name = name + " §4§l[VIP]";
             }
             if (info.readOnly) {
-                MutableComponent readOnlyText = Component.translatable("tooltips.netmusic.cd.read_only").withStyle(ChatFormatting.YELLOW);
+                MutableComponent readOnlyText = Component.translatable("tooltips.netmusic.cd.read_only")
+                        .withStyle(ChatFormatting.YELLOW);
                 return Component.literal(name).append(CommonComponents.SPACE).append(readOnlyText);
             }
             return Component.literal(name);
@@ -96,7 +101,8 @@ public class ItemMusicCD extends Item {
                 String text = prefix + I18n.get("tooltips.netmusic.cd.artists") + delimiter + "§3" + artistNames;
                 tooltip.add(Component.literal(text));
             }
-            String text = prefix + I18n.get("tooltips.netmusic.cd.time") + delimiter + "§5" + getSongTime(info.songTime);
+            String text =
+                    prefix + I18n.get("tooltips.netmusic.cd.time") + delimiter + "§5" + getSongTime(info.songTime);
             tooltip.add(Component.literal(text));
         } else {
             tooltip.add(Component.translatable("tooltips.netmusic.cd.empty").withStyle(ChatFormatting.RED));
@@ -104,6 +110,7 @@ public class ItemMusicCD extends Item {
     }
 
     public static class SongInfo {
+        
         @SerializedName("url")
         public String songUrl;
         @SerializedName("name")

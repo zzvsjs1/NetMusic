@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class BlockComputer extends HorizontalDirectionalBlock {
+
     protected static final VoxelShape NORTH_AABB = makeShape();
     protected static final VoxelShape SOUTH_AABB = rotateShape(Direction.SOUTH, Direction.NORTH, NORTH_AABB);
     protected static final VoxelShape EAST_AABB = rotateShape(Direction.SOUTH, Direction.EAST, NORTH_AABB);

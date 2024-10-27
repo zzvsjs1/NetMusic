@@ -8,6 +8,7 @@ import java.util.HashMap;
  * @author 内个球
  */
 public class NetEaseMusic {
+
     private final HashMap<String, String> requestPropertyData = new HashMap<>();
 
     public NetEaseMusic() {

@@ -32,8 +32,10 @@ public class NetMusicCommand {
         LiteralArgumentBuilder<CommandSourceStack> get163List = Commands.literal(GET_163_NAME);
         LiteralArgumentBuilder<CommandSourceStack> get163Song = Commands.literal(GET_163_CD_NAME);
         LiteralArgumentBuilder<CommandSourceStack> reload = Commands.literal(RELOAD_NAME);
-        RequiredArgumentBuilder<CommandSourceStack, Long> songListId = Commands.argument(SONG_LIST_ID, LongArgumentType.longArg());
-        RequiredArgumentBuilder<CommandSourceStack, Long> songId = Commands.argument(SONG_ID, LongArgumentType.longArg());
+        RequiredArgumentBuilder<CommandSourceStack, Long> songListId = Commands.argument(SONG_LIST_ID,
+                LongArgumentType.longArg());
+        RequiredArgumentBuilder<CommandSourceStack, Long> songId = Commands.argument(SONG_ID,
+                LongArgumentType.longArg());
 
         root.then(get163List.then(songListId.executes(NetMusicCommand::getSongList)));
         root.then(get163Song.then(songId.executes(NetMusicCommand::getSong)));
@@ -54,7 +56,16 @@ public class NetMusicCommand {
                 if (dropItem != null) {
                     dropItem.makeFakeItem();
                 }
-                serverPlayer.level().playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((serverPlayer.getRandom().nextFloat() - serverPlayer.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                serverPlayer.level()
+                        .playSound(null,
+                                serverPlayer.getX(),
+                                serverPlayer.getY(),
+                                serverPlayer.getZ(),
+                                SoundEvents.ITEM_PICKUP,
+                                SoundSource.PLAYERS,
+                                0.2F,
+                                ((serverPlayer.getRandom().nextFloat() - serverPlayer.getRandom().nextFloat()) * 0.7F
+                                        + 1.0F) * 2.0F);
                 serverPlayer.inventoryMenu.broadcastChanges();
             } else {
                 ItemEntity dropItem = serverPlayer.drop(musicDisc, false);
@@ -63,7 +74,8 @@ public class NetMusicCommand {
                     dropItem.setThrower(serverPlayer.getUUID());
                 }
             }
-            context.getSource().sendSuccess(() -> Component.translatable("command.netmusic.music_cd.add163cd.success"), false);
+            context.getSource()
+                    .sendSuccess(() -> Component.translatable("command.netmusic.music_cd.add163cd.success"), false);
         } catch (Exception e) {
             e.printStackTrace();
             context.getSource().sendFailure(Component.translatable("command.netmusic.music_cd.add163cd.fail"));
@@ -85,7 +97,8 @@ public class NetMusicCommand {
     private static int reload(CommandContext<CommandSourceStack> context) {
         try {
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
-            NetworkHandler.sendToClientPlayer(new GetMusicListMessage(GetMusicListMessage.RELOAD_MESSAGE), serverPlayer);
+            NetworkHandler.sendToClientPlayer(new GetMusicListMessage(GetMusicListMessage.RELOAD_MESSAGE),
+                    serverPlayer);
         } catch (Exception e) {
             e.printStackTrace();
         }

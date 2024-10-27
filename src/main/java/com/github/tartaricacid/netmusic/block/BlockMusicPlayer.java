@@ -104,6 +104,7 @@ public class BlockMusicPlayer extends HorizontalDirectionalBlock implements Enti
                         player.markDirty();
                         return;
                     }
+
                     ItemMusicCD.SongInfo songInfo = ItemMusicCD.getSongInfo(stackInSlot);
                     if (songInfo != null) {
                         player.setPlayToClient(songInfo);

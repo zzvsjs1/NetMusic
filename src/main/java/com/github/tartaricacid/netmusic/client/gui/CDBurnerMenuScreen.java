@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.anti_ad.mc.ipn.api.IPNIgnore;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,9 +50,14 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
             perText = textField.getValue();
             focus = textField.isFocused();
         }
-        textField = new EditBox(getMinecraft().font, leftPos + 12, topPos + 18, 132, 16, Component.literal("Music ID Box")) {
+        textField = new EditBox(getMinecraft().font,
+                leftPos + 12,
+                topPos + 18,
+                132,
+                16,
+                Component.literal("Music ID Box")) {
             @Override
-            public void insertText(String text) {
+            public void insertText(@NotNull String text) {
                 Matcher matcher1 = URL_1_REG.matcher(text);
                 if (matcher1.find()) {
                     String group = matcher1.group(1);
@@ -77,10 +83,15 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
         textField.moveCursorToEnd();
         this.addWidget(this.textField);
 
-        this.readOnlyButton = new Checkbox(leftPos + 66, topPos + 34, 80, 20, Component.translatable("gui.netmusic.cd_burner.read_only"), false);
+        this.readOnlyButton = new Checkbox(leftPos + 66,
+                topPos + 34,
+                80,
+                20,
+                Component.translatable("gui.netmusic.cd_burner.read_only"),
+                false);
         this.addRenderableWidget(this.readOnlyButton);
-        this.addRenderableWidget(Button.builder(Component.translatable("gui.netmusic.cd_burner.craft"), (b) -> handleCraftButton())
-                .pos(leftPos + 7, topPos + 35).size(55, 18).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.netmusic.cd_burner.craft"),
+                (b) -> handleCraftButton()).pos(leftPos + 7, topPos + 35).size(55, 18).build());
     }
 
     private void handleCraftButton() {
@@ -89,15 +100,18 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
             this.tips = Component.translatable("gui.netmusic.cd_burner.cd_is_empty");
             return;
         }
+
         ItemMusicCD.SongInfo songInfo = ItemMusicCD.getSongInfo(cd);
         if (songInfo != null && songInfo.readOnly) {
             this.tips = Component.translatable("gui.netmusic.cd_burner.cd_read_only");
             return;
         }
+
         if (Util.isBlank(textField.getValue())) {
             this.tips = Component.translatable("gui.netmusic.cd_burner.no_music_id");
             return;
         }
+
         if (ID_REG.matcher(textField.getValue()).matches()) {
             long id = Long.parseLong(textField.getValue());
             try {
@@ -106,7 +120,7 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
                 NetworkHandler.CHANNEL.sendToServer(new SetMusicIDMessage(song));
             } catch (Exception e) {
                 this.tips = Component.translatable("gui.netmusic.cd_burner.get_info_error");
-                e.printStackTrace();
+                NetMusic.LOGGER.error("Error", e);
             }
         } else {
             this.tips = Component.translatable("gui.netmusic.cd_burner.music_id_error");
@@ -130,8 +144,14 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
         super.render(graphics, x, y, partialTicks);
         textField.render(graphics, x, y, partialTicks);
         if (Util.isBlank(textField.getValue()) && !textField.isFocused()) {
-            graphics.drawString(font, Component.translatable("gui.netmusic.cd_burner.id.tips").withStyle(ChatFormatting.ITALIC), this.leftPos + 12, this.topPos + 18, ChatFormatting.GRAY.getColor(), false);
+            graphics.drawString(font,
+                    Component.translatable("gui.netmusic.cd_burner.id.tips").withStyle(ChatFormatting.ITALIC),
+                    this.leftPos + 12,
+                    this.topPos + 18,
+                    ChatFormatting.GRAY.getColor(),
+                    false);
         }
+
         graphics.drawWordWrap(font, tips, this.leftPos + 8, this.topPos + 57, 135, 0xCF0000);
         renderTooltip(graphics, x, y);
     }
@@ -164,6 +184,7 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
         if (this.getMinecraft().options.keyInventory.isActiveAndMatches(mouseKey) && textField.isFocused()) {
             return true;
         }
+
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 

@@ -10,9 +10,9 @@ import com.github.tartaricacid.netmusic.init.InitSounds
 import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.config.ModConfig
-import thedarkcolour.kotlinforforge.forge.MOD_CONTEXT
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import thedarkcolour.kotlinforforge.forge.MOD_CONTEXT
 
 @Mod(NetMusic.MOD_ID)
 object NetMusic {
@@ -34,6 +34,5 @@ object NetMusic {
         InitContainer.CONTAINER_TYPE.register(MOD_CONTEXT.getKEventBus())
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, GeneralConfig.init())
     }
-
 
 }
