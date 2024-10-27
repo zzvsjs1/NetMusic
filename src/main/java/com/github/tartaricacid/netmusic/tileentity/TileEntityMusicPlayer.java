@@ -123,6 +123,7 @@ public class TileEntityMusicPlayer extends BlockEntity {
                     info.songUrl,
                     info.songTime,
                     info.songName);
+
             NetworkHandler.sendToNearby(level, worldPosition, msg);
         }
     }

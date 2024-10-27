@@ -32,7 +32,7 @@ object NetMusic {
         InitItems.TABS.register(MOD_CONTEXT.getKEventBus())
         InitSounds.SOUND_EVENTS.register(MOD_CONTEXT.getKEventBus())
         InitContainer.CONTAINER_TYPE.register(MOD_CONTEXT.getKEventBus())
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, GeneralConfig.init())
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, GeneralConfig.buildConfig())
     }
 
 }

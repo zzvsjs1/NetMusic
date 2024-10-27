@@ -1,5 +1,6 @@
 package com.github.tartaricacid.netmusic.network.message;
 
+import com.github.tartaricacid.netmusic.NetMusic;
 import com.github.tartaricacid.netmusic.client.config.MusicListManage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -47,7 +48,8 @@ public class GetMusicListMessage {
                     if (player != null) {
                         player.sendSystemMessage(Component.translatable("command.netmusic.music_cd.add163.fail").withStyle(ChatFormatting.RED));
                     }
-                    e.printStackTrace();
+
+                    NetMusic.LOGGER.error("Error", e);
                 }
             });
         }

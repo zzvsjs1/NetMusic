@@ -97,6 +97,7 @@ public class NetEaseMusicList {
     }
 
     public static class PlayList {
+
         @SerializedName("name")
         private String name;
 

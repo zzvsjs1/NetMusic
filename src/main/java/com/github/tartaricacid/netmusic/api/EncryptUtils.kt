@@ -3,8 +3,9 @@ package com.github.tartaricacid.netmusic.api
 import org.apache.commons.codec.binary.Base64
 import java.math.BigInteger
 import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import java.util.*
+import java.util.random.RandomGenerator
+import java.util.random.RandomGeneratorFactory
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -13,6 +14,15 @@ import javax.crypto.spec.SecretKeySpec
  * @author 内个球
  */
 object EncryptUtils {
+
+    private val random: RandomGenerator = RandomGeneratorFactory.getDefault().create()
+
+    private val randomString: String
+        get() = buildString {
+            for (i in 0..15) {
+                append(Integer.toHexString(random.nextInt(16)))
+            }
+        }
 
     @JvmStatic
     @Throws(Exception::class)
@@ -31,14 +41,17 @@ object EncryptUtils {
         val secKey = randomString
         val encText = aesEncrypt(aesEncrypt(text, nonce), secKey)
         val encSecKey = rsaEncrypt(secKey, pubKey, modulus)
-        return "params=" + URLEncoder.encode(encText, "UTF-8") + "&encSecKey=" + URLEncoder.encode(encSecKey, "UTF-8")
+
+        return "params=" +
+                URLEncoder.encode(encText, Charsets.UTF_8) +
+                "&encSecKey=" + URLEncoder.encode(encSecKey, Charsets.UTF_8)
     }
 
     @JvmStatic
     @Throws(Exception::class)
     private fun aesEncrypt(text: String, key: String): String {
-        val ivParameterSpec = IvParameterSpec("0102030405060708".toByteArray(StandardCharsets.UTF_8))
-        val secretKeySpec = SecretKeySpec(key.toByteArray(StandardCharsets.UTF_8), "AES")
+        val ivParameterSpec = IvParameterSpec("0102030405060708".toByteArray(Charsets.UTF_8))
+        val secretKeySpec = SecretKeySpec(key.toByteArray(Charsets.UTF_8), "AES")
         val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
         cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec)
         val encrypted = cipher.doFinal(text.toByteArray())
@@ -46,30 +59,21 @@ object EncryptUtils {
     }
 
     private fun rsaEncrypt(text: String, pubKey: String, modulus: String): String {
-        var text = text
-        text = StringBuilder(text).reverse().toString()
-        val bigIntVal = BigInteger(1, text.toByteArray())
+        val reverseText = text.reversed()
+        val bigIntVal = BigInteger(1, reverseText.toByteArray())
         val exp = BigInteger(pubKey, 16)
         val mod = BigInteger(modulus, 16)
         val hexString = StringBuilder(bigIntVal.modPow(exp, mod).toString(16))
 
         if (hexString.length >= 256) {
             return hexString.substring(hexString.length - 256)
-        } else {
-            while (hexString.length < 256) {
-                hexString.insert(0, "0")
-            }
-            return hexString.toString()
         }
+
+        while (hexString.length < 256) {
+            hexString.insert(0, "0")
+        }
+
+        return hexString.toString()
     }
 
-    private val randomString: String
-        get() {
-            val stringBuffer = StringBuilder()
-            val r = Random()
-            for (i in 0..15) {
-                stringBuffer.append(Integer.toHexString(r.nextInt(16)))
-            }
-            return stringBuffer.toString()
-        }
 }

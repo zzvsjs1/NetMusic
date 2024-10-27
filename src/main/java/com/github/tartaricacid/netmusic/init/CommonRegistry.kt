@@ -9,6 +9,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 object CommonRegistry {
     @SubscribeEvent
     fun onSetupEvent(event: FMLCommonSetupEvent) {
-        event.enqueueWork { NetworkHandler.init() }
+        event.enqueueWork { NetworkHandler.doInit() }
     }
 }

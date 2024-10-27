@@ -1,5 +1,6 @@
 package com.github.tartaricacid.netmusic.compat.tlm.client.audio;
 
+import com.github.tartaricacid.netmusic.NetMusic;
 import com.github.tartaricacid.netmusic.client.audio.Mp3AudioStream;
 import com.github.tartaricacid.netmusic.init.InitSounds;
 import net.minecraft.Util;
@@ -64,8 +65,9 @@ public class MaidNetMusicSound extends AbstractTickableSoundInstance {
             try {
                 return new Mp3AudioStream(this.songUrl);
             } catch (IOException | UnsupportedAudioFileException e) {
-                e.printStackTrace();
+                NetMusic.LOGGER.error("Error to create stream", e);
             }
+
             return null;
         }, Util.backgroundExecutor());
     }
