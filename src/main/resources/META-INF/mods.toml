@@ -1,6 +1,3 @@
-#modLoader = "javafml"
-#loaderVersion = "[46,)"
-
 modLoader="kotlinforforge"
 loaderVersion="[4.10,)"
 
