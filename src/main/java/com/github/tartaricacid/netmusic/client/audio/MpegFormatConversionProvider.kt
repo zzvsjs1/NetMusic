@@ -27,7 +27,6 @@ import javazoom.spi.mpeg.sampled.file.MpegEncoding
 import org.tritonus.share.TDebug
 import org.tritonus.share.sampled.Encodings
 import org.tritonus.share.sampled.convert.TEncodingFormatConversionProvider
-import java.util.*
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem

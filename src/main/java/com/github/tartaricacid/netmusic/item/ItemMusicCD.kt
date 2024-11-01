@@ -114,14 +114,14 @@ class ItemMusicCD : Item((Properties())) {
         }
 
         constructor(pojo: NetEaseMusicSong) {
-            val song = pojo.song
+            val song = pojo.getSong()
             if (song != null) {
                 this.songUrl = String.format("https://music.163.com/song/media/outer/url?id=%d.mp3", song.id)
                 this.songName = song.name
                 this.songTime = song.duration / 1000
                 this.transName = song.transName
                 this.vip = song.needVip()
-                this.artists = song.artists
+                this.artists = song.getArtists1().toMutableList()
             }
         }
 
@@ -131,7 +131,7 @@ class ItemMusicCD : Item((Properties())) {
             this.songTime = track.duration / 1000
             this.transName = track.transName
             this.vip = track.needVip()
-            this.artists = track.artists
+            this.artists = track.getArtists().toMutableList()
         }
 
         constructor(tag: CompoundTag) {
@@ -149,7 +149,7 @@ class ItemMusicCD : Item((Properties())) {
             }
             if (tag.contains("artists", Tag.TAG_LIST.toInt())) {
                 val tagList = tag.getList("artists", Tag.TAG_STRING.toInt())
-                this.artists = Lists.newArrayList()
+                this.artists = mutableListOf()
                 tagList.forEach(Consumer { nbt: Tag -> (artists as ArrayList<String?>).add(nbt.asString) })
             }
         }

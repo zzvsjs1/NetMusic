@@ -60,7 +60,7 @@ public class MaidNetMusicSound extends AbstractTickableSoundInstance {
     }
 
     @Override
-    public @NotNull CompletableFuture<AudioStream> getStream(SoundBufferLibrary soundBuffers, Sound sound, boolean looping) {
+    public @NotNull CompletableFuture<AudioStream> getStream(@NotNull SoundBufferLibrary soundBuffers, @NotNull Sound sound, boolean looping) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return new Mp3AudioStream(this.songUrl);

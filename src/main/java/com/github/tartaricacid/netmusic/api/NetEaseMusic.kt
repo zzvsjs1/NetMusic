@@ -7,7 +7,7 @@ import java.util.HashMap
  * @author 内个球
  */
 class NetEaseMusic {
-    private val requestPropertyData = HashMap<String, String>()
+    private val requestPropertyData = hashMapOf<String, String>()
 
     constructor() {
         init()

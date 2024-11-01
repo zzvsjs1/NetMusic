@@ -39,7 +39,7 @@ class BlockMusicPlayer :
         this.registerDefaultState(stateDefinition.any().setValue(FACING, Direction.SOUTH))
     }
 
-    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity? {
+    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity {
         return TileEntityMusicPlayer(pos, state)
     }
 
@@ -52,7 +52,7 @@ class BlockMusicPlayer :
         return defaultBlockState().setValue(FACING, direction)
     }
 
-    @Deprecated("Deprecated in Java")
+    @Deprecated("Deprecated in Java", ReplaceWith("true"))
     override fun hasAnalogOutputSignal(blockState: BlockState): Boolean {
         return true
     }

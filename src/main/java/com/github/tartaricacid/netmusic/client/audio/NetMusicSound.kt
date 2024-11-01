@@ -79,6 +79,7 @@ class NetMusicSound(pos: BlockPos, private val songUrl: URL, timeSecond: Int)
             } catch (e: UnsupportedAudioFileException) {
                 e.printStackTrace()
             }
+
             null
         }, Util.backgroundExecutor())
     }

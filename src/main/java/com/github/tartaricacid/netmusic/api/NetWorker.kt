@@ -2,7 +2,7 @@ package com.github.tartaricacid.netmusic.api
 
 import com.github.tartaricacid.netmusic.NetMusic
 import com.github.tartaricacid.netmusic.config.GeneralConfig
-import org.apache.commons.lang3.StringUtils
+import okhttp3.OkHttpClient
 import java.io.*
 import java.net.*
 import java.nio.charset.StandardCharsets
@@ -12,47 +12,15 @@ import java.nio.charset.StandardCharsets
  */
 object NetWorker {
 
-//    @Throws(IOException::class)
-//    fun get(url: String, requestPropertyData: Map<String, String?>): String {
-//        val result = StringBuilder()
-//        val urlConnect: URL
-//
-//        try {
-//            urlConnect = URI(url).toURL()
-//            val connection = urlConnect.openConnection(proxyFromConfig)
-//
-//            val keys: Collection<String> = requestPropertyData.keys
-//            for (key in keys) {
-//                val `val` = requestPropertyData[key]
-//                connection.setRequestProperty(key, `val`)
-//            }
-//
-//            connection.connectTimeout = 12000
-//            connection.doInput = true
-//
-//            BufferedReader(
-//                InputStreamReader(
-//                    connection.getInputStream(),
-//                    StandardCharsets.UTF_8
-//                )
-//            ).use { bufferedReader ->
-//                var line: String?
-//                while ((bufferedReader.readLine().also { line = it }) != null) {
-//                    result.append(line)
-//                }
-//            }
-//        } catch (e: IOException) {
-//            NetMusic.LOGGER.error(e)
-//            throw e
-//        } finally {
-//        }
-//
-//        return result.toString()
-//    }
+    private val HTTP_CLIENT = OkHttpClient
+        .Builder()
+        .proxy(proxyFromConfig)
+        .build()
 
     @Throws(IOException::class)
     fun get(url: String, requestProperties: Map<String, String?>, proxy: Proxy? = null): String {
         val result = StringBuilder()
+
 
         try {
             val urlConnection = URI(url).toURL().openConnection(proxy) as HttpURLConnection
@@ -90,8 +58,8 @@ object NetWorker {
         val connection = urlConnect.openConnection(proxyFromConfig) as HttpURLConnection
         val keys: Collection<String> = requestPropertyData.keys
         for (key in keys) {
-            val `val` = requestPropertyData[key]
-            connection.setRequestProperty(key, `val`)
+            val value = requestPropertyData[key]
+            connection.setRequestProperty(key, value)
         }
 
         connection.connectTimeout = 3000

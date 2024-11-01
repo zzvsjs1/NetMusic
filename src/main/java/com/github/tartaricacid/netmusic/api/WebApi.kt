@@ -4,8 +4,9 @@ import com.github.tartaricacid.netmusic.api.EncryptUtils.encryptedParam
 import org.apache.commons.lang3.StringUtils
 import java.io.IOException
 import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
-class WebApi(val requestPropertyData: HashMap<String, String>) {
+class WebApi(val requestPropertyData: Map<String, String>) {
 
     companion object {
         const val TYPE_SONG: Int = 1
@@ -42,7 +43,7 @@ class WebApi(val requestPropertyData: HashMap<String, String>) {
     @Throws(IOException::class)
     fun songs(vararg songIds: Long): String {
         val ids = StringUtils.deleteWhitespace(songIds.contentToString())
-        val url = "http://music.163.com/api/song/detail/?ids=" + URLEncoder.encode(ids, "utf-8")
+        val url = "http://music.163.com/api/song/detail/?ids=" + URLEncoder.encode(ids, StandardCharsets.UTF_8)
         return NetWorker.get(url, requestPropertyData)
     }
 

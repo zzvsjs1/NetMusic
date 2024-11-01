@@ -5,7 +5,6 @@ import com.github.tartaricacid.netmusic.api.ExtraMusicList;
 import com.github.tartaricacid.netmusic.api.pojo.NetEaseMusicList;
 import com.github.tartaricacid.netmusic.api.pojo.NetEaseMusicSong;
 import com.github.tartaricacid.netmusic.item.ItemMusicCD;
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -22,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +30,7 @@ public class MusicListManage {
     private static final Gson GSON = new Gson();
     private static final Path CONFIG_DIR = Paths.get("config").resolve("net_music");
     private static final Path CONFIG_FILE = CONFIG_DIR.resolve("music.json");
-    public static List<ItemMusicCD.SongInfo> SONGS = Lists.newArrayList();
+    public static List<ItemMusicCD.SongInfo> SONGS = new ArrayList<>();
 
     public static void loadConfigSongs() throws IOException {
         if (!Files.isDirectory(CONFIG_DIR)) {

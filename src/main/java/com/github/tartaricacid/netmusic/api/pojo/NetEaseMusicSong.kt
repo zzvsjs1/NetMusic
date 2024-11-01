@@ -1,6 +1,5 @@
 package com.github.tartaricacid.netmusic.api.pojo
 
-import com.google.common.collect.Lists
 import com.google.gson.annotations.SerializedName
 import org.apache.commons.lang3.StringUtils
 import java.util.function.Consumer
@@ -29,13 +28,14 @@ class NetEaseMusicSong {
         private val fee = 0
 
         @SerializedName(value = "artists", alternate = ["ar"])
-        private val artists: List<Artist>? = null
+        val artists: List<Artist>? = null
 
         val transName: String
             get() {
-                if (transNames == null || transNames.isEmpty()) {
+                if (transNames.isNullOrEmpty()) {
                     return StringUtils.EMPTY
                 }
+
                 return transNames[0]
             }
 
@@ -43,18 +43,18 @@ class NetEaseMusicSong {
             return fee == 1
         }
 
-        fun getArtists(): List<String?> {
-            if (artists == null || artists.isEmpty()) {
+        fun getArtists1(): List<String?> {
+            if (artists.isNullOrEmpty()) {
                 return emptyList<String>()
             }
 
-            val artistNames: MutableList<String?> = Lists.newArrayList()
-            artists.forEach(Consumer { artist: Artist -> artistNames.add(artist.name) })
+            val artistNames: MutableList<String?> = mutableListOf()
+            artists.forEach { artist: Artist -> artistNames.add(artist.name) }
             return artistNames
         }
     }
 
-    private class Artist {
+    class Artist {
         @SerializedName("name")
         val name: String? = null
     }
