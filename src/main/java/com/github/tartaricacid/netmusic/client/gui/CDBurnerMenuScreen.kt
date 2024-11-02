@@ -38,6 +38,13 @@ class CDBurnerMenuScreen(
         this.imageHeight = 176
     }
 
+    companion object {
+        private val BG = ResourceLocation(NetMusic.MOD_ID, "textures/gui/cd_burner.png")
+        private val ID_REG: Pattern = Pattern.compile("^\\d{4,}$")
+        private val URL_1_REG: Pattern = Pattern.compile("^https://music\\.163\\.com/song\\?id=(\\d+).*$")
+        private val URL_2_REG: Pattern = Pattern.compile("^https://music\\.163\\.com/#/song\\?id=(\\d+).*$")
+    }
+
     override fun init() {
         super.init()
 
@@ -81,6 +88,7 @@ class CDBurnerMenuScreen(
         (textField as EditBox).setTextColor(0xF3EFE0)
         (textField as EditBox).isFocused = focus
         (textField as EditBox).moveCursorToEnd()
+
         this.addWidget(this.textField)
 
         this.readOnlyButton = Checkbox(
@@ -205,10 +213,4 @@ class CDBurnerMenuScreen(
         textField!!.insertText(text)
     }
 
-    companion object {
-        private val BG = ResourceLocation(NetMusic.MOD_ID, "textures/gui/cd_burner.png")
-        private val ID_REG: Pattern = Pattern.compile("^\\d{4,}$")
-        private val URL_1_REG: Pattern = Pattern.compile("^https://music\\.163\\.com/song\\?id=(\\d+).*$")
-        private val URL_2_REG: Pattern = Pattern.compile("^https://music\\.163\\.com/#/song\\?id=(\\d+).*$")
-    }
 }

@@ -69,12 +69,14 @@ public class MusicListManage {
 
         int count = pojo.getPlayList().getTracks().size();
         int size = Math.min(pojo.getPlayList().getTrackIds().size(), MAX_NUM);
+
         // 获取额外歌曲
         if (count < size) {
             long[] ids = new long[size - count];
             for (int i = count; i < size; i++) {
                 ids[i - count] = pojo.getPlayList().getTrackIds().get(i).getId();
             }
+
             String extraTrackInfo = NetMusic.NET_EASE_WEB_API.songs(ids);
             ExtraMusicList extra = GSON.fromJson(extraTrackInfo, ExtraMusicList.class);
             pojo.getPlayList().getTracks().addAll(extra.getTracks());

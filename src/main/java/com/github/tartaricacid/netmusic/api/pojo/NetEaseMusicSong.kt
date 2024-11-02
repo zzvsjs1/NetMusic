@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils
 import java.util.function.Consumer
 
 class NetEaseMusicSong {
+
     @SerializedName("code")
     val code: Int = 0
 

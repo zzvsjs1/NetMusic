@@ -26,14 +26,16 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 
 class BlockCDBurner
-    : HorizontalDirectionalBlock(Properties.of().sound(SoundType.WOOD).strength(0.5f).noOcclusion()) {
-
-    init {
-        this.registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH))
-    }
+    : HorizontalDirectionalBlock(
+    Properties.of().sound(SoundType.WOOD).strength(0.5f).noOcclusion()
+) {
 
     companion object {
         private val BLOCK_AABB: VoxelShape = box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0)
+    }
+
+    init {
+        this.registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH))
     }
 
     override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
@@ -71,15 +73,15 @@ class BlockCDBurner
     ): InteractionResult {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS
-        } else {
-            player.openMenu(blockState.getMenuProvider(level, pos))
-            return InteractionResult.CONSUME
         }
+
+        player.openMenu(blockState.getMenuProvider(level, pos))
+        return InteractionResult.CONSUME
     }
 
     @Deprecated("Deprecated in Java")
     override fun getMenuProvider(blockState: BlockState, level: Level, blockPos: BlockPos): MenuProvider {
-        return SimpleMenuProvider({ id: Int, inventory: Inventory?, player: Player? ->
+        return SimpleMenuProvider({ id: Int, inventory: Inventory?, _: Player? ->
             CDBurnerMenu(
                 id,
                 inventory!!

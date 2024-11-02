@@ -27,8 +27,53 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 
-class BlockComputer :
-    HorizontalDirectionalBlock(Properties.of().sound(SoundType.WOOD).strength(0.5f).noOcclusion()) {
+class BlockComputer
+    : HorizontalDirectionalBlock(
+    Properties.of().sound(SoundType.WOOD).strength(0.5f).noOcclusion()
+) {
+
+    companion object {
+        private val NORTH_AABB: VoxelShape = makeShape()
+        private val SOUTH_AABB: VoxelShape = rotateShape(Direction.SOUTH, Direction.NORTH, NORTH_AABB)
+        private val EAST_AABB: VoxelShape = rotateShape(Direction.SOUTH, Direction.EAST, NORTH_AABB)
+        private val WEST_AABB: VoxelShape = rotateShape(Direction.NORTH, Direction.EAST, NORTH_AABB)
+
+        private fun makeShape(): VoxelShape {
+            var shape = Shapes.empty()
+            shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.40625, 1.0, 0.3125, 1.0), BooleanOp.OR)
+            shape = Shapes.join(shape, Shapes.box(0.1875, 0.3125, 0.40625, 0.8125, 0.375, 0.875), BooleanOp.OR)
+            shape = Shapes.join(shape, Shapes.box(0.125, 0.375, 0.53125, 0.875, 0.84375, 0.9375), BooleanOp.OR)
+            shape = Shapes.join(
+                shape,
+                Shapes.box(0.1250625, 0.5608175, 0.47502125, 0.8749375, 0.9356925, 0.88114625),
+                BooleanOp.OR
+            )
+            shape = Shapes.join(shape, Shapes.box(0.1875, 0.4375, 0.40625, 0.8125, 0.9375, 0.59375), BooleanOp.OR)
+            shape = Shapes.join(shape, Shapes.box(0.0625, 0.3125, 0.34375, 0.9375, 0.4375, 0.59375), BooleanOp.OR)
+            shape = Shapes.join(shape, Shapes.box(0.0625, 0.9375, 0.34375, 0.9375, 1.0625, 0.59375), BooleanOp.OR)
+            shape = Shapes.join(shape, Shapes.box(0.8125, 0.4375, 0.34375, 0.9375, 0.9375, 0.59375), BooleanOp.OR)
+            shape = Shapes.join(shape, Shapes.box(0.0625, 0.4375, 0.34375, 0.1875, 0.9375, 0.59375), BooleanOp.OR)
+            shape = Shapes.join(shape, Shapes.box(0.0, 0.0625, 0.03125, 1.0, 0.1875, 0.375), BooleanOp.OR)
+            return shape
+        }
+
+        private fun rotateShape(from: Direction, to: Direction, shape: VoxelShape): VoxelShape {
+            val buffer = arrayOf(shape, Shapes.empty())
+            val times = (to.ordinal - from.get2DDataValue() + 4) % 4
+            for (i in 0 until times) {
+                buffer[0].forAllBoxes { minX: Double, minY: Double, minZ: Double, maxX: Double, maxY: Double, maxZ: Double ->
+                    buffer[1] = Shapes.or(
+                        buffer[1], Shapes.create(1 - maxZ, minY, minX, 1 - minZ, maxY, maxX)
+                    )
+                }
+                buffer[0] = buffer[1]
+                buffer[1] = Shapes.empty()
+            }
+
+            return buffer[0]
+        }
+    }
+
     init {
         this.registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH))
     }
@@ -80,16 +125,16 @@ class BlockComputer :
     ): InteractionResult {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS
-        } else {
-            player.openMenu(blockState.getMenuProvider(level, pos))
-            return InteractionResult.CONSUME
         }
+        player.openMenu(blockState.getMenuProvider(level, pos))
+        return InteractionResult.CONSUME
+
     }
 
     @Deprecated("Deprecated in Java")
-    override fun getMenuProvider(blockState: BlockState, level: Level, blockPos: BlockPos): MenuProvider? {
+    override fun getMenuProvider(blockState: BlockState, level: Level, blockPos: BlockPos): MenuProvider {
         return SimpleMenuProvider(
-            { id: Int, inventory: Inventory?, player: Player? -> ComputerMenu(id, inventory) },
+            { id: Int, inventory: Inventory?, _: Player? -> ComputerMenu(id, inventory) },
             Component.literal("computer")
         )
     }
@@ -104,44 +149,4 @@ class BlockComputer :
         tooltip.add(Component.translatable("block.netmusic.computer.local_file.desc").withStyle(ChatFormatting.GRAY))
     }
 
-    companion object {
-        private val NORTH_AABB: VoxelShape = makeShape()
-        private val SOUTH_AABB: VoxelShape = rotateShape(Direction.SOUTH, Direction.NORTH, NORTH_AABB)
-        private val EAST_AABB: VoxelShape = rotateShape(Direction.SOUTH, Direction.EAST, NORTH_AABB)
-        private val WEST_AABB: VoxelShape = rotateShape(Direction.NORTH, Direction.EAST, NORTH_AABB)
-
-        private fun makeShape(): VoxelShape {
-            var shape = Shapes.empty()
-            shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.40625, 1.0, 0.3125, 1.0), BooleanOp.OR)
-            shape = Shapes.join(shape, Shapes.box(0.1875, 0.3125, 0.40625, 0.8125, 0.375, 0.875), BooleanOp.OR)
-            shape = Shapes.join(shape, Shapes.box(0.125, 0.375, 0.53125, 0.875, 0.84375, 0.9375), BooleanOp.OR)
-            shape = Shapes.join(
-                shape,
-                Shapes.box(0.1250625, 0.5608175, 0.47502125, 0.8749375, 0.9356925, 0.88114625),
-                BooleanOp.OR
-            )
-            shape = Shapes.join(shape, Shapes.box(0.1875, 0.4375, 0.40625, 0.8125, 0.9375, 0.59375), BooleanOp.OR)
-            shape = Shapes.join(shape, Shapes.box(0.0625, 0.3125, 0.34375, 0.9375, 0.4375, 0.59375), BooleanOp.OR)
-            shape = Shapes.join(shape, Shapes.box(0.0625, 0.9375, 0.34375, 0.9375, 1.0625, 0.59375), BooleanOp.OR)
-            shape = Shapes.join(shape, Shapes.box(0.8125, 0.4375, 0.34375, 0.9375, 0.9375, 0.59375), BooleanOp.OR)
-            shape = Shapes.join(shape, Shapes.box(0.0625, 0.4375, 0.34375, 0.1875, 0.9375, 0.59375), BooleanOp.OR)
-            shape = Shapes.join(shape, Shapes.box(0.0, 0.0625, 0.03125, 1.0, 0.1875, 0.375), BooleanOp.OR)
-            return shape
-        }
-
-        private fun rotateShape(from: Direction, to: Direction, shape: VoxelShape): VoxelShape {
-            val buffer = arrayOf(shape, Shapes.empty())
-            val times = (to.ordinal - from.get2DDataValue() + 4) % 4
-            for (i in 0 until times) {
-                buffer[0].forAllBoxes { minX: Double, minY: Double, minZ: Double, maxX: Double, maxY: Double, maxZ: Double ->
-                    buffer[1] = Shapes.or(
-                        buffer[1], Shapes.create(1 - maxZ, minY, minX, 1 - minZ, maxY, maxX)
-                    )
-                }
-                buffer[0] = buffer[1]
-                buffer[1] = Shapes.empty()
-            }
-            return buffer[0]
-        }
-    }
 }

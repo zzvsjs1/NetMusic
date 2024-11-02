@@ -23,7 +23,7 @@ class Mp3AudioStream @Throws(IOException::class, UnsupportedAudioFileException::
 
     private var stream: AudioInputStream? = null
 
-    private lateinit var array: ByteArray
+    private lateinit var buffer: ByteArray
 
     private var offset by Delegates.notNull<Int>()
 
@@ -61,7 +61,7 @@ class Mp3AudioStream @Throws(IOException::class, UnsupportedAudioFileException::
             this.stream = targetInputStream
         }
 
-        this.array = IOUtils.toByteArray(stream)
+        this.buffer = IOUtils.toByteArray(stream)
         this.offset = 0
     }
 
@@ -71,8 +71,8 @@ class Mp3AudioStream @Throws(IOException::class, UnsupportedAudioFileException::
 
     override fun read(size: Int): ByteBuffer {
         val byteBuffer = BufferUtils.createByteBuffer(size)
-        if (array.size >= offset + size) {
-            byteBuffer.put(array, offset, size)
+        if (buffer.size >= offset + size) {
+            byteBuffer.put(buffer, offset, size)
         } else {
             byteBuffer.put(ByteArray(size))
         }

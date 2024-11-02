@@ -27,7 +27,7 @@ import java.nio.charset.StandardCharsets
 object NetWorker {
 
     private val connectionManager = PoolingHttpClientConnectionManager().apply {
-        maxTotal = 20
+        maxTotal = 10
         defaultMaxPerRoute = 10
     }
 
@@ -38,7 +38,7 @@ object NetWorker {
 
     private val DEFAULT_REQUEST_CONFIG = RequestConfig.custom()
         .setConnectTimeout(10_000) // 10 seconds
-        .setSocketTimeout(10_000)  // 10 seconds
+        .setConnectionRequestTimeout(10_000)  // 10 seconds
         .build()
 
     /**

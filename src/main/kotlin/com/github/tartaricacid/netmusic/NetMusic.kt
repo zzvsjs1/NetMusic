@@ -1,7 +1,6 @@
 package com.github.tartaricacid.netmusic
 
 import com.github.tartaricacid.netmusic.api.NetEaseMusic
-import com.github.tartaricacid.netmusic.api.NetWorker
 import com.github.tartaricacid.netmusic.api.WebApi
 import com.github.tartaricacid.netmusic.config.GeneralConfig
 import com.github.tartaricacid.netmusic.init.InitBlocks
@@ -27,6 +26,10 @@ object NetMusic {
     val LOGGER: Logger = LogManager.getLogger(MOD_ID)
 
     init {
+        doInit()
+    }
+
+    private fun doInit() {
         InitBlocks.BLOCKS.register(MOD_CONTEXT.getKEventBus())
         InitBlocks.TILE_ENTITIES.register(MOD_CONTEXT.getKEventBus())
         InitItems.ITEMS.register(MOD_CONTEXT.getKEventBus())

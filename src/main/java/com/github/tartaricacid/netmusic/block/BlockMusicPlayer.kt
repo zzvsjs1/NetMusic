@@ -35,6 +35,7 @@ import java.util.function.Consumer
 class BlockMusicPlayer :
     HorizontalDirectionalBlock(Properties.of().sound(SoundType.WOOD).strength(0.5f).noOcclusion()),
     EntityBlock {
+
     init {
         this.registerDefaultState(stateDefinition.any().setValue(FACING, Direction.SOUTH))
     }
@@ -66,6 +67,7 @@ class BlockMusicPlayer :
                 if (blockEntity.isPlay) {
                     return 15
                 }
+
                 return 7
             }
         }

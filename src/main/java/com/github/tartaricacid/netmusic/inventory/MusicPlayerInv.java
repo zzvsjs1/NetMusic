@@ -1,7 +1,6 @@
 package com.github.tartaricacid.netmusic.inventory;
 
 import com.github.tartaricacid.netmusic.init.InitItems;
-import com.github.tartaricacid.netmusic.item.ItemMusicCD;
 import com.github.tartaricacid.netmusic.tileentity.TileEntityMusicPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
@@ -34,6 +33,7 @@ public class MusicPlayerInv extends ItemStackHandler {
             te.setPlay(false);
             te.setCurrentTime(0);
         }
+
         te.markDirty();
     }
 }

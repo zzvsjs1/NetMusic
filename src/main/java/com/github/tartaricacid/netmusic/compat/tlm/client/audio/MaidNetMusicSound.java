@@ -21,8 +21,11 @@ import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 
 public class MaidNetMusicSound extends AbstractTickableSoundInstance {
+
     private final URL songUrl;
+
     private final int tickTimes;
+
     private int tick;
 
     public MaidNetMusicSound(URL songUrl, int timeSecond) {
