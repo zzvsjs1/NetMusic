@@ -1,204 +1,206 @@
 package com.github.tartaricacid.netmusic.api
 
 import com.github.tartaricacid.netmusic.NetMusic
-import com.github.tartaricacid.netmusic.config.GeneralConfig
-import okhttp3.OkHttpClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.apache.http.client.config.RequestConfig
+import org.apache.http.client.methods.CloseableHttpResponse
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.entity.ContentType
+import org.apache.http.entity.StringEntity
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
+import org.apache.http.util.EntityUtils
 import java.io.*
 import java.net.*
 import java.nio.charset.StandardCharsets
 
 /**
+ * NetWorker is a singleton object responsible for handling HTTP GET and POST requests.
+ * It leverages Apache HttpClient for executing requests and supports both synchronous
+ * and asynchronous operations using Kotlin coroutines.
+ *
  * @author 内个球
  */
 object NetWorker {
 
-    private val HTTP_CLIENT = OkHttpClient
-        .Builder()
-        .proxy(proxyFromConfig)
-        .build()
-
-    @Throws(IOException::class)
-    fun get(url: String, requestProperties: Map<String, String?>, proxy: Proxy? = null): String {
-        val result = StringBuilder()
-
-
-        try {
-            val urlConnection = URI(url).toURL().openConnection(proxy) as HttpURLConnection
-
-            // Set request properties
-            requestProperties.forEach { (key, value) ->
-                value?.let {
-                    urlConnection.setRequestProperty(key, it)
-                }
-            }
-
-            // Configure connection settings
-            urlConnection.connectTimeout = 12_000 // 12 seconds
-            urlConnection.readTimeout = 12_000 // Optional: set read timeout
-            urlConnection.requestMethod = "GET"
-            urlConnection.doInput = true
-
-            // Connect and read the response
-            urlConnection.inputStream.bufferedReader(StandardCharsets.UTF_8).use { bufferedReader ->
-                bufferedReader.forEachLine { line ->
-                    result.appendLine(line)
-                }
-            }
-        } catch (e: IOException) {
-            NetMusic.LOGGER.error("Failed to GET from URL: $url with properties: $requestProperties", e)
-            throw e
-        }
-
-        return result.toString()
+    private val connectionManager = PoolingHttpClientConnectionManager().apply {
+        maxTotal = 20
+        defaultMaxPerRoute = 10
     }
 
-    @Throws(IOException::class)
-    fun getRedirectUrl(url: String, requestPropertyData: Map<String, String?>): String? {
-        val urlConnect = URI(url).toURL()
-        val connection = urlConnect.openConnection(proxyFromConfig) as HttpURLConnection
-        val keys: Collection<String> = requestPropertyData.keys
-        for (key in keys) {
-            val value = requestPropertyData[key]
-            connection.setRequestProperty(key, value)
-        }
+    private val HTTP_CLIENT = HttpClients.custom()
+        .setConnectionManager(connectionManager)
+        .setRetryHandler(DefaultHttpRequestRetryHandler(3, true))
+        .build()
 
-        connection.connectTimeout = 3000
-        connection.readTimeout = 5000
-        return connection.getHeaderField("Location")
+    private val DEFAULT_REQUEST_CONFIG = RequestConfig.custom()
+        .setConnectTimeout(10_000) // 10 seconds
+        .setSocketTimeout(10_000)  // 10 seconds
+        .build()
+
+    /**
+     * Executes an asynchronous HTTP GET request.
+     *
+     * @param url The URL to send the GET request to.
+     * @param requestProperties A map of request headers to include in the GET request.
+     * @return The response body as a [String].
+     * @throws NetWorkerException If the GET request fails.
+     */
+    suspend fun getAsync(url: String, requestProperties: Map<String, String?>): String = withContext(Dispatchers.IO) {
+        get(url, requestProperties)
     }
 
     /**
-     * Sends an HTTP POST request to the specified [url] with the given [param] and [requestProperties].
+     * Executes an asynchronous HTTP POST request.
      *
-     * This function constructs a [URL] from the provided string, sets up the connection with the specified
-     * request properties, sends the POST parameters, and retrieves the response.
-     *
-     * @param url the [String] representing the endpoint to send the POST request to.
-     * @param param the POST parameters as a [String]. Can be `null` if no parameters are to be sent.
-     * @param requestProperties a [Map] containing request header keys and their corresponding values.
-     * @param proxy an optional [Proxy] to route the connection through. Defaults to `null`.
-     * @return the response from the server as a [String].
-     * @throws IOException if an I/O exception occurs during the process.
+     * @param url The URL to send the POST request to.
+     * @param param The request body as a [String]. Can be null.
+     * @param requestProperties A map of request headers to include in the POST request.
+     * @return The response body as a [String].
+     * @throws NetWorkerException If the POST request fails.
      */
-    @Throws(IOException::class)
+    suspend fun postAsync(url: String, param: String?, requestProperties: Map<String, String?>): String =
+        withContext(Dispatchers.IO) {
+            post(url, param, requestProperties)
+        }
+
+    /**
+     * Executes a synchronous HTTP GET request.
+     *
+     * @param url The URL to send the GET request to.
+     * @param requestProperties A map of request headers to include in the GET request.
+     * @return The response body as a [String].
+     * @throws NetWorkerException If the GET request fails or returns a non-2xx status code.
+     */
+    @Throws(NetWorkerException::class)
+    fun get(url: String, requestProperties: Map<String, String?>): String {
+        // Create the HTTP GET request
+        val httpGet = HttpGet(url).apply {
+            // Set headers from the requestProperties map
+            requestProperties.forEach { (key, value) ->
+                value?.let { setHeader(key, it) }
+            }
+
+            config = DEFAULT_REQUEST_CONFIG
+        }
+
+        try {
+            // Execute the request using the HTTP client
+            HTTP_CLIENT.execute(httpGet).use { response ->
+                val statusCode = response.statusLine.statusCode
+                val entity = response.entity ?: throw NetWorkerException("No response entity for GET request to $url")
+                val responseBody = EntityUtils.toString(entity, StandardCharsets.UTF_8)
+
+                if (statusCode in 200..299) {
+                    return responseBody
+                }
+
+                throw NetWorkerException("GET request to $url returned status $statusCode: $responseBody")
+            }
+        } catch (e: IOException) {
+            // Log the error with URL and request properties
+            NetMusic.LOGGER.error("Failed to GET from URL: $url with properties: $requestProperties", e)
+            throw NetWorkerException("GET request failed for URL: $url", e)
+        }
+    }
+
+
+    /**
+     * Retrieves the redirect URL from an HTTP response if a redirect is present.
+     *
+     * @param url The URL to send the GET request to.
+     * @param requestProperties A map of request headers to include in the GET request.
+     * @return The redirect URL as a [String] if a redirect status is received; otherwise, null.
+     * @throws NetWorkerException If the request fails.
+     */
+    @Throws(NetWorkerException::class)
+    fun getRedirectUrl(url: String, requestProperties: Map<String, String?>): String? {
+        // Configure the request to not follow redirects automatically
+        val requestConfig = RequestConfig.custom()
+            .setRedirectsEnabled(false)
+            .setConnectTimeout(3000)
+            .setSocketTimeout(5000)
+            .build()
+
+        val httpGet = HttpGet(url).apply {
+            requestProperties.forEach { (key, value) ->
+                value?.let { setHeader(key, it) }
+            }
+
+            config = requestConfig
+        }
+
+        HTTP_CLIENT.execute(httpGet).use { response ->
+            val statusCode = response.statusLine.statusCode
+            if (statusCode in 300..399) {
+                return response.getFirstHeader("Location")?.value
+            }
+
+            return null
+        }
+    }
+
+    /**
+     * Executes a synchronous HTTP POST request.
+     *
+     * @param url The URL to send the POST request to.
+     * @param param The request body as a [String]. Can be null.
+     * @param requestProperties A map of request headers to include in the POST request.
+     * @param contentType The content type of the request body. Defaults to [ContentType.APPLICATION_JSON].
+     * @return The response body as a [String]. Returns an empty string if the response has no entity.
+     * @throws NetWorkerException If the POST request fails or returns a non-2xx status code.
+     */
+    @Throws(NetWorkerException::class)
     fun post(
         url: String,
         param: String?,
         requestProperties: Map<String, String?>,
-        proxy: Proxy? = null
+        contentType: ContentType = ContentType.APPLICATION_JSON
     ): String {
-        val result = StringBuilder()
+        val requestConfig = RequestConfig.custom()
+            // 12 seconds
+            .setConnectTimeout(12_000)
+            .setSocketTimeout(12_000)
+            .build()
+
+        // Create an HttpPost request with the specified URL
+        val httpPost = HttpPost(url).apply {
+            this.config = requestConfig
+            // Set headers from requestPropertyData map
+            requestProperties.forEach { (key, value) ->
+                this.setHeader(key, value)
+            }
+
+            // Set the POST request body
+            val entity = StringEntity(param, contentType)
+            this.entity = entity
+        }
 
         try {
-            // Create URL and open connection
-            val urlConnection = URI(url).toURL().openConnection(proxy) as HttpURLConnection
+            // Execute the POST request
+            HTTP_CLIENT.execute(httpPost).use { response: CloseableHttpResponse ->
+                // Check for a successful response (status code 2xx)
+                val statusCode = response.statusLine.statusCode
 
-            // Set request properties
-            requestProperties.forEach { (key, value) ->
-                value?.let {
-                    urlConnection.setRequestProperty(key, it)
+                if (statusCode in 200..299) {
+                    // Get the response entity
+                    val entity = response.entity ?: return ""
+                    // Convert the entity content to a String
+                    return EntityUtils.toString(entity, StandardCharsets.UTF_8)
                 }
-            }
 
-            // Configure connection settings
-            urlConnection.apply {
-                connectTimeout = 12_000 // 12 seconds
-                readTimeout = 12_000 // 12 seconds
-                requestMethod = "POST"
-                doOutput = true
-                doInput = true
+                // Handle non-successful status codes as needed
+                throw NetWorkerException("Unexpected response status: $statusCode for POST request to $url")
             }
-
-            // Write POST parameters if present
-            param?.let {
-                urlConnection.outputStream.use { outputStream ->
-                    OutputStreamWriter(outputStream, StandardCharsets.UTF_8).use { writer ->
-                        writer.write(it)
-                        writer.flush()
-                    }
-                }
-            }
-
-            // Connect and handle the response
-            val responseCode = urlConnection.responseCode
-            if (responseCode in 200..299) {
-                urlConnection.inputStream.bufferedReader(StandardCharsets.UTF_8).use { bufferedReader ->
-                    bufferedReader.forEachLine { line ->
-                        result.appendLine(line)
-                    }
-                }
-            } else {
-                // Optionally read the error stream for more information
-                val errorStream = urlConnection.errorStream
-                val errorMessage = errorStream?.bufferedReader(StandardCharsets.UTF_8)?.use { it.readText() }
-                NetMusic.LOGGER.error("HTTP POST request failed with response code $responseCode and message: $errorMessage")
-                throw IOException("HTTP POST request failed with response code $responseCode")
-            }
-
         } catch (e: IOException) {
-            NetMusic.LOGGER.error("Failed to POST to URL: $url with parameters: $param and properties: $requestProperties", e)
-            throw e
+            // Log the error with URL and request properties
+            NetMusic.LOGGER.error("Failed to POST to URL: $url with properties: $requestProperties", e)
+            // Rethrow the exception to be handled by the caller
+            throw NetWorkerException("POST request failed for URL: $url", e)
         }
-
-        return result.toString()
     }
 
-//    private val proxyFromConfig: Proxy
-//        get() {
-//            val proxyType = GeneralConfig.PROXY_TYPE!!.get()
-//            val proxyAddress = GeneralConfig.PROXY_ADDRESS!!.get()
-//            if (proxyType == Proxy.Type.DIRECT || StringUtils.isBlank(proxyAddress)) {
-//                return Proxy.NO_PROXY
-//            }
-//
-//            val split = proxyAddress.split(":".toRegex(), limit = 2).toTypedArray()
-//            if (split.size != 2) {
-//                return Proxy.NO_PROXY
-//            }
-//            return Proxy(proxyType, InetSocketAddress(split[0], split[1].toInt()))
-//        }
-
-    /**
-     * Retrieves the proxy configuration based on the application's general settings.
-     *
-     * This property checks the configured proxy type and address. If the proxy type is `DIRECT`
-     * or the proxy address is blank or improperly formatted, it defaults to `Proxy.NO_PROXY`.
-     * Otherwise, it parses the proxy address to create a [Proxy] instance.
-     *
-     * @return A [Proxy] instance based on the configuration or `Proxy.NO_PROXY` if no proxy is set.
-     */
-    private val proxyFromConfig: Proxy
-        get() {
-            val proxyType = GeneralConfig.PROXY_TYPE?.get() ?: Proxy.Type.DIRECT
-            val proxyAddress = GeneralConfig.PROXY_ADDRESS?.get()
-
-            if (proxyType == Proxy.Type.DIRECT || proxyAddress.isNullOrBlank()) {
-                return Proxy.NO_PROXY
-            }
-
-            val split = proxyAddress.split(":", limit = 2).map { it.trim() }
-            if (split.size != 2) {
-                NetMusic.LOGGER.warn("Invalid proxy address format: '$proxyAddress'. Using NO_PROXY.")
-                return Proxy.NO_PROXY
-            }
-
-            val (host, portStr) = split
-            if (host.isEmpty() || portStr.isEmpty()) {
-                NetMusic.LOGGER.warn("Invalid proxy address format: '$proxyAddress'. Using NO_PROXY.")
-                return Proxy.NO_PROXY
-            }
-
-            val port = portStr.toIntOrNull()
-            if (port == null || port !in 1..65535) {
-                NetMusic.LOGGER.warn("Invalid proxy port: '$portStr'. Using NO_PROXY.")
-                return Proxy.NO_PROXY
-            }
-
-            return try {
-                Proxy(proxyType, InetSocketAddress(host, port))
-            } catch (e: IllegalArgumentException) {
-                NetMusic.LOGGER.warn("Failed to create proxy with host: '$host' and port: $port. Using NO_PROXY.")
-                Proxy.NO_PROXY
-            }
-        }
 }

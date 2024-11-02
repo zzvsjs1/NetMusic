@@ -1,6 +1,7 @@
 package com.github.tartaricacid.netmusic
 
 import com.github.tartaricacid.netmusic.api.NetEaseMusic
+import com.github.tartaricacid.netmusic.api.NetWorker
 import com.github.tartaricacid.netmusic.api.WebApi
 import com.github.tartaricacid.netmusic.config.GeneralConfig
 import com.github.tartaricacid.netmusic.init.InitBlocks
