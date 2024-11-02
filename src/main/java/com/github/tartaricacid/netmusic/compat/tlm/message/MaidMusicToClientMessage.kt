@@ -1,6 +1,6 @@
 package com.github.tartaricacid.netmusic.compat.tlm.message
 
-import com.github.tartaricacid.netmusic.client.audio.MusicPlayManager.play
+import com.github.tartaricacid.netmusic.client.audio.MusicPlayManager.tryPlayMusic
 import com.github.tartaricacid.netmusic.compat.tlm.client.audio.MaidNetMusicSound
 import net.minecraft.Util
 import net.minecraft.client.Minecraft
@@ -51,7 +51,7 @@ class MaidMusicToClientMessage(
                 return
             }
 
-            play(message.url, message.songName) { url: URL? -> MaidNetMusicSound(url, message.timeSecond) }
+            tryPlayMusic(message.url, message.songName) { url: URL? -> MaidNetMusicSound(url, message.timeSecond) }
         }
     }
 }

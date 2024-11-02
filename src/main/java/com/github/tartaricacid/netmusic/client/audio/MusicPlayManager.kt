@@ -18,11 +18,13 @@ import java.net.URL
 object MusicPlayManager {
 
     private const val ERROR_404 = "http://music.163.com/404"
+
     private const val MUSIC_163_URL = "https://music.163.com/"
+
     private const val LOCAL_FILE_PROTOCOL = "file"
 
     @JvmStatic
-    fun play(url: String?, songName: String, sound: (URL) -> SoundInstance) {
+    fun tryPlayMusic(url: String?, songName: String, sound: (URL) -> SoundInstance) {
         var urlVar = url
 
         if (urlVar!!.startsWith(MUSIC_163_URL)) {

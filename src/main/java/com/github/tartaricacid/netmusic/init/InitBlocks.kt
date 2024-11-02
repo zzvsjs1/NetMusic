@@ -22,13 +22,13 @@ object InitBlocks {
         DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, NetMusic.MOD_ID)
 
     @JvmField
-    var MUSIC_PLAYER: RegistryObject<Block> = BLOCKS.register<Block>("music_player", ::BlockMusicPlayer)
+    var MUSIC_PLAYER: RegistryObject<Block> = BLOCKS.register("music_player", ::BlockMusicPlayer)
 
     @JvmField
-    var CD_BURNER: RegistryObject<Block> = BLOCKS.register<Block>("cd_burner", ::BlockCDBurner)
+    var CD_BURNER: RegistryObject<Block> = BLOCKS.register("cd_burner", ::BlockCDBurner)
 
     @JvmField
-    var COMPUTER: RegistryObject<Block> = BLOCKS.register<Block>("computer", ::BlockComputer)
+    var COMPUTER: RegistryObject<Block> = BLOCKS.register("computer", ::BlockComputer)
 
     @JvmField
     var MUSIC_PLAYER_TE: RegistryObject<BlockEntityType<TileEntityMusicPlayer>> = TILE_ENTITIES.register(

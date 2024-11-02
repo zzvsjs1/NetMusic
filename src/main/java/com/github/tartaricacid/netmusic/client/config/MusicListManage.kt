@@ -33,6 +33,7 @@ object MusicListManage {
     var SONGS: MutableList<SongInfo> = mutableListOf()
 
     @Throws(IOException::class)
+    @JvmStatic
     fun loadConfigSongs() {
         if (!Files.isDirectory(CONFIG_DIR)) {
             Files.createDirectories(CONFIG_DIR)
@@ -60,6 +61,7 @@ object MusicListManage {
     }
 
     @Throws(Exception::class)
+    @JvmStatic
     fun get163Song(id: Long): SongInfo {
         val pojo = GSON.fromJson(
             NetMusic.NET_EASE_WEB_API.song(id),
@@ -70,6 +72,7 @@ object MusicListManage {
     }
 
     @Throws(Exception::class)
+    @JvmStatic
     fun add163List(id: Long) {
         if (!Files.isDirectory(CONFIG_DIR)) {
             Files.createDirectories(CONFIG_DIR)

@@ -1,7 +1,7 @@
 package com.github.tartaricacid.netmusic.network.message
 
-import com.github.tartaricacid.netmusic.client.audio.MusicPlayManager.play
-import com.github.tartaricacid.netmusic.client.audio.NetMusicSound
+import com.github.tartaricacid.netmusic.client.audio.MusicPlayManager.tryPlayMusic
+import com.github.tartaricacid.netmusic.client.audio.NetMusicMp3Sound
 import net.minecraft.Util
 import net.minecraft.core.BlockPos
 import net.minecraft.network.FriendlyByteBuf
@@ -47,10 +47,10 @@ class MusicToClientMessage(
 
         @OnlyIn(Dist.CLIENT)
         private fun onHandle(message: MusicToClientMessage) {
-            play(
+            tryPlayMusic(
                 message.url,
                 message.songName
-            ) { url: URL? -> NetMusicSound(message.pos, url!!, message.timeSecond) }
+            ) { url: URL? -> NetMusicMp3Sound(message.pos, url!!, message.timeSecond) }
         }
     }
 }

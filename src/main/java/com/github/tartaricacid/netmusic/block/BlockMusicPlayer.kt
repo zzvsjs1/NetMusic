@@ -101,8 +101,7 @@ class BlockMusicPlayer :
 
         val te = worldIn.getBlockEntity(pos) as? TileEntityMusicPlayer ?: return InteractionResult.PASS
 
-        val musicPlayer = te
-        val handler: IItemHandler = musicPlayer.playerInv
+        val handler: IItemHandler = te.playerInv
         if (!handler.getStackInSlot(0).isEmpty) {
             val extract = handler.extractItem(0, 1, false)
             popResource(worldIn, pos, extract)
@@ -124,20 +123,22 @@ class BlockMusicPlayer :
         if (!playerIn.isCreative) {
             stack.shrink(1)
         }
-        musicPlayer.setPlayToClient(info)
-        musicPlayer.markDirty()
+
+        te.setPlayToClient(info)
+        te.markDirty()
         return InteractionResult.SUCCESS
     }
 
     @Deprecated("Deprecated in Java")
     override fun onRemove(state: BlockState, worldIn: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
-        val te = worldIn.getBlockEntity(pos)
-        if (te is TileEntityMusicPlayer) {
-            val stack = te.playerInv.getStackInSlot(0)
+        val blockEntity = worldIn.getBlockEntity(pos)
+        if (blockEntity is TileEntityMusicPlayer) {
+            val stack = blockEntity.playerInv.getStackInSlot(0)
             if (!stack.isEmpty) {
                 popResource(worldIn, pos, stack)
             }
         }
+
         super.onRemove(state, worldIn, pos, newState, isMoving)
     }
 
@@ -148,17 +149,24 @@ class BlockMusicPlayer :
     ): BlockEntityTicker<T>? {
         return if (!level.isClientSide) createTickerHelper(
             entityType, TileEntityMusicPlayer.TYPE
-        ) { level: Level?, blockPos: BlockPos?, blockState: BlockState?, te: TileEntityMusicPlayer? ->
+        ) { level: Level?, blockPos: BlockPos?, blockState: BlockState?, tileEntityMusicPlayer: TileEntityMusicPlayer? ->
             TileEntityMusicPlayer.tick(
                 level,
                 blockPos,
                 blockState,
-                te
+                tileEntityMusicPlayer
             )
-        } else null
+        } else {
+            null
+        }
     }
 
-    @Deprecated("Deprecated in Java")
+    @Deprecated(
+        "Deprecated in Java", ReplaceWith(
+            "BLOCK_AABB",
+            "com.github.tartaricacid.netmusic.block.BlockMusicPlayer.Companion.BLOCK_AABB"
+        )
+    )
     override fun getShape(
         state: BlockState,
         worldIn: BlockGetter,
@@ -168,7 +176,10 @@ class BlockMusicPlayer :
         return BLOCK_AABB
     }
 
-    @Deprecated("Deprecated in Java")
+    @Deprecated(
+        "Deprecated in Java",
+        ReplaceWith("RenderShape.ENTITYBLOCK_ANIMATED", "net.minecraft.world.level.block.RenderShape")
+    )
     override fun getRenderShape(state: BlockState): RenderShape {
         return RenderShape.ENTITYBLOCK_ANIMATED
     }
@@ -185,6 +196,7 @@ class BlockMusicPlayer :
                     val pos = target.blockPos
                     this.crack(world, pos, Blocks.ACACIA_WOOD.defaultBlockState(), target.direction)
                 }
+
                 return true
             }
 
@@ -211,21 +223,27 @@ class BlockMusicPlayer :
                     if (side == Direction.DOWN) {
                         y = posY + aabb.minY - 0.1
                     }
+
                     if (side == Direction.UP) {
                         y = posY + aabb.maxY + 0.1
                     }
+
                     if (side == Direction.NORTH) {
                         z = posZ + aabb.minZ - 0.1
                     }
+
                     if (side == Direction.SOUTH) {
                         z = posZ + aabb.maxZ + 0.1
                     }
+
                     if (side == Direction.WEST) {
                         x = posX + aabb.minX - 0.1
                     }
+
                     if (side == Direction.EAST) {
                         x = posX + aabb.maxX + 0.1
                     }
+
                     val diggingParticle = TerrainParticle(world, x, y, z, 0.0, 0.0, 0.0, state)
                     Minecraft.getInstance().particleEngine.add(
                         diggingParticle.updateSprite(state, pos).setPower(0.2f).scale(0.6f)
@@ -236,7 +254,7 @@ class BlockMusicPlayer :
     }
 
     companion object {
-        protected val BLOCK_AABB: VoxelShape = box(2.0, 0.0, 2.0, 14.0, 6.0, 14.0)
+        val BLOCK_AABB: VoxelShape = box(2.0, 0.0, 2.0, 14.0, 6.0, 14.0)
 
         private fun playerMusic(level: Level, blockPos: BlockPos, signal: Boolean) {
             val blockEntity = level.getBlockEntity(blockPos)
@@ -249,6 +267,7 @@ class BlockMusicPlayer :
                             blockEntity.markDirty()
                             return
                         }
+
                         val stackInSlot = blockEntity.playerInv.getStackInSlot(0)
                         if (stackInSlot.isEmpty) {
                             blockEntity.setSignal(signal)
@@ -261,13 +280,14 @@ class BlockMusicPlayer :
                             blockEntity.setPlayToClient(songInfo)
                         }
                     }
+
                     blockEntity.setSignal(signal)
                     blockEntity.markDirty()
                 }
             }
         }
 
-        protected fun <E : BlockEntity?, A : BlockEntity?> createTickerHelper(
+        fun <E : BlockEntity?, A : BlockEntity?> createTickerHelper(
             entityType: BlockEntityType<A>,
             type: BlockEntityType<E>,
             ticker: BlockEntityTicker<in E>?

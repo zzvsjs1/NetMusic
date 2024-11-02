@@ -1,8 +1,6 @@
 package com.github.tartaricacid.netmusic.api.pojo
 
 import com.google.gson.annotations.SerializedName
-import org.apache.commons.lang3.StringUtils
-import java.util.function.Consumer
 
 class NetEaseMusicSong {
 
@@ -34,7 +32,7 @@ class NetEaseMusicSong {
         val transName: String
             get() {
                 if (transNames.isNullOrEmpty()) {
-                    return StringUtils.EMPTY
+                    return ""
                 }
 
                 return transNames[0]
@@ -61,7 +59,7 @@ class NetEaseMusicSong {
     }
 
     fun getSong(): Song? {
-        if (song!!.isEmpty()) {
+        if (song.isNullOrEmpty()) {
             return null
         }
 

@@ -2,29 +2,24 @@ package com.github.tartaricacid.netmusic.client.audio
 
 import com.github.tartaricacid.netmusic.init.InitSounds
 import com.github.tartaricacid.netmusic.tileentity.TileEntityMusicPlayer
-import net.minecraft.Util
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance
-import net.minecraft.client.resources.sounds.Sound
 import net.minecraft.client.resources.sounds.SoundInstance
-import net.minecraft.client.sounds.AudioStream
-import net.minecraft.client.sounds.SoundBufferLibrary
 import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.sounds.SoundSource
-import java.io.IOException
 import java.net.URL
-import java.util.concurrent.CompletableFuture
-import javax.sound.sampled.UnsupportedAudioFileException
 
-class NetMusicSound(pos: BlockPos, private val songUrl: URL, timeSecond: Int)
+abstract class NetMusicSound(pos: BlockPos, private val songUrl: URL, timeSecond: Int)
     : AbstractTickableSoundInstance(
-        InitSounds.NET_MUSIC.get(),
-        SoundSource.RECORDS,
-        SoundInstance.createUnseededRandom()
-    ) {
+    InitSounds.NET_MUSIC.get(),
+    SoundSource.RECORDS,
+    SoundInstance.createUnseededRandom()
+) {
     private val tickTimes: Int
+
     private val pos: BlockPos
+
     private var tick: Int
 
     init {
@@ -40,6 +35,7 @@ class NetMusicSound(pos: BlockPos, private val songUrl: URL, timeSecond: Int)
     override fun tick() {
         val world = Minecraft.getInstance().level ?: return
         tick++
+
         if (tick > tickTimes + 50) {
             this.stop()
         } else {
@@ -50,15 +46,17 @@ class NetMusicSound(pos: BlockPos, private val songUrl: URL, timeSecond: Int)
                         x - 0.5f + world.random.nextDouble(),
                         y + world.random.nextDouble() + 1,
                         z - 0.5f + world.random.nextDouble(),
-                        world.random.nextGaussian(), world.random.nextGaussian(), world.random.nextInt(3).toDouble()
+                        world.random.nextGaussian(),
+                        world.random.nextGaussian(),
+                        world.random.nextInt(3).toDouble()
                     )
                 }
             }
         }
 
-        val te = world.getBlockEntity(pos)
-        if (te is TileEntityMusicPlayer) {
-            if (!te.isPlay) {
+        val blockEntity = world.getBlockEntity(pos)
+        if (blockEntity is TileEntityMusicPlayer) {
+            if (!blockEntity.isPlay) {
                 this.stop()
             }
         } else {
@@ -66,21 +64,4 @@ class NetMusicSound(pos: BlockPos, private val songUrl: URL, timeSecond: Int)
         }
     }
 
-    override fun getStream(
-        soundBuffers: SoundBufferLibrary,
-        sound: Sound,
-        looping: Boolean
-    ): CompletableFuture<AudioStream> {
-        return CompletableFuture.supplyAsync({
-            try {
-                return@supplyAsync Mp3AudioStream(this.songUrl)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } catch (e: UnsupportedAudioFileException) {
-                e.printStackTrace()
-            }
-
-            null
-        }, Util.backgroundExecutor())
-    }
 }

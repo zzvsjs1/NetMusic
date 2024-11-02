@@ -31,8 +31,8 @@ import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 
-class MpegFormatConversionProvider :
-    TEncodingFormatConversionProvider(listOf(*INPUT_FORMATS), listOf(*OUTPUT_FORMATS)) {
+class MpegFormatConversionProvider
+    : TEncodingFormatConversionProvider(listOf(*INPUT_FORMATS), listOf(*OUTPUT_FORMATS)) {
 
     companion object {
         private val MPEG1L3: AudioFormat.Encoding = Encodings.getEncoding("MPEG1L3")
@@ -46,7 +46,6 @@ class MpegFormatConversionProvider :
             AudioFormat(MPEG1L3, -1.0f, -1, 2, -1, -1.0f, false),
             AudioFormat(MPEG1L3, -1.0f, -1, 2, -1, -1.0f, true),
         )
-
 
         private val OUTPUT_FORMATS = arrayOf(
             // mono, 16-bit signed
@@ -67,6 +66,7 @@ class MpegFormatConversionProvider :
         if (TDebug.TraceAudioConverter) {
             TDebug.out(">MpegFormatConversionProvider.getAudioInputStream(AudioFormat targetFormat, AudioInputStream audioInputStream):")
         }
+
         return DecodedMpegAudioInputStream(targetFormat, audioInputStream)
     }
 
@@ -90,7 +90,8 @@ class MpegFormatConversionProvider :
             val enc = sourceFormat.encoding
             if (enc is MpegEncoding) {
                 if ((sourceFormat.frameRate != AudioSystem.NOT_SPECIFIED.toFloat())
-                    || (sourceFormat.frameSize != AudioSystem.NOT_SPECIFIED)) {
+                    || (sourceFormat.frameSize != AudioSystem.NOT_SPECIFIED)
+                ) {
                     conversion = true
                 }
             }
