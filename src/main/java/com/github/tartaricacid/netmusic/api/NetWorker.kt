@@ -148,7 +148,7 @@ object NetWorker {
      *
      * @param url The URL to send the POST request to.
      * @param param The request body as a [String]. Can be null.
-     * @param requestProperties A map of request headers to include in the POST request.
+     * @param header A map of request headers to include in the POST request.
      * @param contentType The content type of the request body. Defaults to [ContentType.APPLICATION_JSON].
      * @return The response body as a [String]. Returns an empty string if the response has no entity.
      * @throws NetWorkerException If the POST request fails or returns a non-2xx status code.
@@ -157,7 +157,7 @@ object NetWorker {
     fun post(
         url: String,
         param: String?,
-        requestProperties: Map<String, String?>,
+        header: Map<String, String?>,
         contentType: ContentType = ContentType.APPLICATION_JSON
     ): String {
         val requestConfig = RequestConfig.custom()
@@ -170,7 +170,7 @@ object NetWorker {
         val httpPost = HttpPost(url).apply {
             this.config = requestConfig
             // Set headers from requestPropertyData map
-            requestProperties.forEach { (key, value) ->
+            header.forEach { (key, value) ->
                 this.setHeader(key, value)
             }
 
@@ -197,7 +197,7 @@ object NetWorker {
             }
         } catch (e: IOException) {
             // Log the error with URL and request properties
-            NetMusic.LOGGER.error("Failed to POST to URL: $url with properties: $requestProperties", e)
+            NetMusic.LOGGER.error("Failed to POST to URL: $url with properties: $header", e)
             // Rethrow the exception to be handled by the caller
             throw NetWorkerException("POST request failed for URL: $url", e)
         }

@@ -27,7 +27,7 @@ object MusicPlayManager {
 
         if (urlVar!!.startsWith(MUSIC_163_URL)) {
             try {
-                urlVar = NetWorker.getRedirectUrl(urlVar, NetMusic.NET_EASE_WEB_API.requestPropertyData)
+                urlVar = NetWorker.getRedirectUrl(urlVar, NetMusic.NET_EASE_WEB_API.header)
             } catch (e: IOException) {
                 NetMusic.LOGGER.error(e)
             }

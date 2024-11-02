@@ -26,7 +26,7 @@ class CDBurnerMenuScreen(
     screenContainer: CDBurnerMenu,
     inv: Inventory,
     titleIn: Component
-) : AbstractContainerScreen<CDBurnerMenu?>(screenContainer, inv, titleIn) {
+) : AbstractContainerScreen<CDBurnerMenu>(screenContainer, inv, titleIn) {
 
     private var textField: EditBox? = null
 
@@ -55,7 +55,7 @@ class CDBurnerMenuScreen(
             focus = textField!!.isFocused
         }
 
-        textField = object : EditBox(
+        val textField = object : EditBox(
             getMinecraft().font,
             leftPos + 12,
             topPos + 18,
@@ -80,18 +80,20 @@ class CDBurnerMenuScreen(
 
                 super.insertText(text)
             }
+        }.apply {
+            value = perText
+            setBordered(false)
+            setMaxLength(19)
+            setTextColor(0xF3EFE0)
+            isFocused = focus
+            moveCursorToEnd()
         }
 
-        (textField as EditBox).value = perText
-        (textField as EditBox).setBordered(false)
-        (textField as EditBox).setMaxLength(19)
-        (textField as EditBox).setTextColor(0xF3EFE0)
-        (textField as EditBox).isFocused = focus
-        (textField as EditBox).moveCursorToEnd()
+        this.textField = textField
 
-        this.addWidget(this.textField)
+        this.addWidget(textField)
 
-        this.readOnlyButton = Checkbox(
+        val readOnlyButton = Checkbox(
             leftPos + 66,
             topPos + 34,
             80,
@@ -100,18 +102,20 @@ class CDBurnerMenuScreen(
             false
         )
 
-        this.addRenderableWidget(this.readOnlyButton)
+        this.readOnlyButton = readOnlyButton
+
+        this.addRenderableWidget(readOnlyButton)
+
         this.addRenderableWidget(
-            Button.builder(
-                Component.translatable("gui.netmusic.cd_burner.craft")
-            ) { b: Button? ->
+            Button.builder(Component.translatable("gui.netmusic.cd_burner.craft")) { button: Button? ->
                 handleCraftButton()
-            }.pos(leftPos + 7, topPos + 35).size(55, 18).build()
+            }
+                .pos(leftPos + 7, topPos + 35).size(55, 18).build()
         )
     }
 
     private fun handleCraftButton() {
-        val cd = menu!!.input.getStackInSlot(0)
+        val cd = menu.input.getStackInSlot(0)
         if (cd.isEmpty) {
             this.tips = Component.translatable("gui.netmusic.cd_burner.cd_is_empty")
             return
@@ -191,12 +195,13 @@ class CDBurnerMenuScreen(
             this.focused = this.textField
             return true
         }
+
         return super.mouseClicked(mouseX, mouseY, button)
     }
 
     override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
         val mouseKey = InputConstants.getKey(keyCode, scanCode)
-        // 防止 E 键关闭界面
+        // Prevent the E key from closing the interface
         if (getMinecraft().options.keyInventory.isActiveAndMatches(mouseKey) && textField!!.isFocused) {
             return true
         }

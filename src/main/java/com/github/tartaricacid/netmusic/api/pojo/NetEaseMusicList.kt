@@ -99,10 +99,10 @@ class NetEaseMusicList {
         val description: String = ""
 
         @SerializedName("tracks")
-        val tracks: List<Track>? = null
+        val tracks: MutableList<Track> = mutableListOf()
 
         @SerializedName("trackIds")
-        val trackIds: MutableList<TrackId>? = null
+        val trackIds: MutableList<TrackId> = mutableListOf()
 
         inner class TrackId {
             @SerializedName("id")
